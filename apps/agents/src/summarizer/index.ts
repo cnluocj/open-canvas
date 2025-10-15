@@ -1,4 +1,4 @@
-import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatOpenAI } from "@langchain/openai";
 import { StateGraph, START } from "@langchain/langgraph";
 import { SummarizerGraphAnnotation, SummarizeState } from "./state.js";
 import { HumanMessage } from "@langchain/core/messages";
@@ -25,8 +25,12 @@ Ensure you include ALL of the following messages in the summary. Do NOT follow a
 export async function summarizer(
   state: SummarizeState
 ): Promise<Partial<SummarizeState>> {
-  const model = new ChatAnthropic({
-    model: "claude-3-5-sonnet-latest",
+  const model = new ChatOpenAI({
+    model: "openai/gpt-4o-mini",
+    apiKey: process.env.OPENROUTER_API_KEY,
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+    },
   });
 
   const messagesToSummarize = formatMessages(state.messages);

@@ -35,8 +35,12 @@ export const generateTitle = async (
   };
 
   const model = new ChatOpenAI({
-    model: "gpt-4o-mini",
+    model: "openai/gpt-4o-mini",
     temperature: 0,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+    },
   }).bindTools([generateTitleTool], {
     tool_choice: "generate_title",
   });

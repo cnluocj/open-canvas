@@ -1,4 +1,4 @@
-import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatOpenAI } from "@langchain/openai";
 import { WebSearchState } from "../state.js";
 import z from "zod";
 
@@ -24,9 +24,13 @@ const classificationSchema = z
 export async function classifyMessage(
   state: WebSearchState
 ): Promise<Partial<WebSearchState>> {
-  const model = new ChatAnthropic({
-    model: "claude-3-5-sonnet-latest",
+  const model = new ChatOpenAI({
+    model: "openai/gpt-4o-mini",
     temperature: 0,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+    },
   }).withStructuredOutput(classificationSchema, {
     name: "classify_message",
   });

@@ -10,6 +10,7 @@ import {
 } from "@opencanvas/shared/types";
 import { BaseStore, LangGraphRunnableConfig } from "@langchain/langgraph";
 import { initChatModel } from "langchain/chat_models/universal";
+import { ChatOpenAI } from "@langchain/openai";
 import pdfParse from "pdf-parse";
 import {
   AIMessage,
@@ -183,6 +184,17 @@ export const getModelConfig = (
 
   const modelConfig = config.configurable?.modelConfig as CustomModelConfig;
 
+  // Check if this is an OpenRouter model based on the provider config
+  if (modelConfig?.provider === "openrouter") {
+    return {
+      modelName: customModelName,
+      modelProvider: "openai", // OpenRouter uses OpenAI-compatible API
+      modelConfig,
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseUrl: "https://openrouter.ai/api/v1",
+    };
+  }
+
   if (customModelName.startsWith("azure/")) {
     let actualModelName = customModelName.replace("azure/", "");
     if (extra?.isToolCalling && actualModelName.includes("o1")) {
@@ -345,7 +357,7 @@ export async function getModelFromConfig(
     maxTokens?: number;
     isToolCalling?: boolean;
   }
-): Promise<ReturnType<typeof initChatModel>> {
+): Promise<ReturnType<typeof initChatModel> | ChatOpenAI> {
   const {
     modelName,
     modelProvider,
@@ -382,6 +394,19 @@ export async function getModelFromConfig(
   const includeStandardParams = !TEMPERATURE_EXCLUDED_MODELS.some(
     (m) => m === modelName
   );
+
+  // For OpenRouter models, use ChatOpenAI directly to ensure proper baseURL configuration
+  if (modelConfig?.provider === "openrouter") {
+    return new ChatOpenAI({
+      modelName,
+      temperature: includeStandardParams ? temperature : undefined,
+      maxTokens: includeStandardParams ? maxTokens : undefined,
+      openAIApiKey: apiKey,
+      configuration: {
+        baseURL: baseUrl,
+      },
+    });
+  }
 
   return await initChatModel(modelName, {
     modelProvider,

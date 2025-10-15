@@ -52,7 +52,8 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
       {} as Record<ALL_MODEL_NAMES, CustomModelConfig>;
 
     ALL_MODELS.forEach((model) => {
-      const modelKey = model.modelName || model.name;
+      // Use model.name as the key (this is what's selected in the UI)
+      const modelKey = model.name;
 
       initialConfigs[modelKey] = {
         ...model.config,

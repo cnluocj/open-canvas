@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { ChatAnthropic } from "@langchain/anthropic";
+import { ChatOpenAI } from "@langchain/openai";
 import { WebSearchState } from "../state.js";
 import { formatMessages } from "../../utils.js";
 
@@ -24,9 +24,13 @@ Respond ONLY with the search query, and nothing else.`;
 export async function queryGenerator(
   state: WebSearchState
 ): Promise<Partial<WebSearchState>> {
-  const model = new ChatAnthropic({
-    model: "claude-3-5-sonnet-latest",
+  const model = new ChatOpenAI({
+    model: "openai/gpt-4o-mini",
     temperature: 0,
+    apiKey: process.env.OPENROUTER_API_KEY,
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+    },
   });
 
   const additionalContext = `The current date is ${format(new Date(), "PPpp")}`;

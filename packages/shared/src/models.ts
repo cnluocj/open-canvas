@@ -461,6 +461,93 @@ const GROQ_MODELS: ModelConfigurationParams[] = [
   },
 ];
 
+const OPENROUTER_MODELS: ModelConfigurationParams[] = [
+  {
+    name: "openai/gpt-4o-mini",
+    label: "GPT-4o mini (OpenRouter)",
+    modelName: "openrouter/openai/gpt-4o-mini",
+    config: {
+      provider: "openrouter",
+      temperatureRange: {
+        min: 0,
+        max: 1,
+        default: 0.5,
+        current: 0.5,
+      },
+      maxTokens: {
+        min: 1,
+        max: 16_384,
+        default: 4_096,
+        current: 4_096,
+      },
+    },
+    isNew: false,
+  },
+  {
+    name: "openai/gpt-4o",
+    label: "GPT-4o (OpenRouter)",
+    modelName: "openrouter/openai/gpt-4o",
+    config: {
+      provider: "openrouter",
+      temperatureRange: {
+        min: 0,
+        max: 1,
+        default: 0.5,
+        current: 0.5,
+      },
+      maxTokens: {
+        min: 1,
+        max: 16_384,
+        default: 4_096,
+        current: 4_096,
+      },
+    },
+    isNew: false,
+  },
+  {
+    name: "anthropic/claude-3-5-sonnet",
+    label: "Claude 3.5 Sonnet (OpenRouter)",
+    modelName: "openrouter/anthropic/claude-3-5-sonnet",
+    config: {
+      provider: "openrouter",
+      temperatureRange: {
+        min: 0,
+        max: 1,
+        default: 0.5,
+        current: 0.5,
+      },
+      maxTokens: {
+        min: 1,
+        max: 8_192,
+        default: 4_096,
+        current: 4_096,
+      },
+    },
+    isNew: false,
+  },
+  {
+    name: "anthropic/claude-3-5-haiku",
+    label: "Claude 3.5 Haiku (OpenRouter)",
+    modelName: "openrouter/anthropic/claude-3-5-haiku",
+    config: {
+      provider: "openrouter",
+      temperatureRange: {
+        min: 0,
+        max: 1,
+        default: 0.5,
+        current: 0.5,
+      },
+      maxTokens: {
+        min: 1,
+        max: 8_192,
+        default: 4_096,
+        current: 4_096,
+      },
+    },
+    isNew: false,
+  },
+];
+
 const GEMINI_MODELS: ModelConfigurationParams[] = [
   {
     name: "gemini-2.5-flash-preview-05-20",
@@ -613,6 +700,7 @@ export const ALL_MODELS: ModelConfigurationParams[] = [
   ...AZURE_MODELS,
   ...OLLAMA_MODELS,
   ...GROQ_MODELS,
+  ...OPENROUTER_MODELS,
 ];
 
 type OPENAI_MODEL_NAMES = (typeof OPENAI_MODELS)[number]["name"];
@@ -622,6 +710,7 @@ type GEMINI_MODEL_NAMES = (typeof GEMINI_MODELS)[number]["name"];
 type AZURE_MODEL_NAMES = (typeof AZURE_MODELS)[number]["name"];
 type OLLAMA_MODEL_NAMES = (typeof OLLAMA_MODELS)[number]["name"];
 type GROQ_MODEL_NAMES = (typeof GROQ_MODELS)[number]["name"];
+type OPENROUTER_MODEL_NAMES = (typeof OPENROUTER_MODELS)[number]["name"];
 export type ALL_MODEL_NAMES =
   | OPENAI_MODEL_NAMES
   | ANTHROPIC_MODEL_NAMES
@@ -629,7 +718,8 @@ export type ALL_MODEL_NAMES =
   | GEMINI_MODEL_NAMES
   | AZURE_MODEL_NAMES
   | OLLAMA_MODEL_NAMES
-  | GROQ_MODEL_NAMES;
+  | GROQ_MODEL_NAMES
+  | OPENROUTER_MODEL_NAMES;
 
 export const DEFAULT_MODEL_NAME: ALL_MODEL_NAMES = OPENAI_MODELS[1].name;
 export const DEFAULT_MODEL_CONFIG: CustomModelConfig = {
