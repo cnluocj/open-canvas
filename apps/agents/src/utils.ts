@@ -357,7 +357,7 @@ export async function getModelFromConfig(
     maxTokens?: number;
     isToolCalling?: boolean;
   }
-): Promise<ReturnType<typeof initChatModel> | ChatOpenAI> {
+): Promise<ReturnType<typeof initChatModel>> {
   const {
     modelName,
     modelProvider,
@@ -397,7 +397,7 @@ export async function getModelFromConfig(
 
   // For OpenRouter models, use ChatOpenAI directly to ensure proper baseURL configuration
   if (modelConfig?.provider === "openrouter") {
-    return new ChatOpenAI({
+    const chatOpenAI = new ChatOpenAI({
       modelName,
       temperature: includeStandardParams ? temperature : undefined,
       maxTokens: includeStandardParams ? maxTokens : undefined,
@@ -406,6 +406,8 @@ export async function getModelFromConfig(
         baseURL: baseUrl,
       },
     });
+    // Cast to the expected return type to maintain compatibility
+    return chatOpenAI as any as ReturnType<typeof initChatModel>;
   }
 
   return await initChatModel(modelName, {
