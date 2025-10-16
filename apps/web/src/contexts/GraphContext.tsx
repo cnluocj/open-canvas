@@ -177,6 +177,44 @@ export function GraphProvider({ children }: { children: ReactNode }) {
     };
   }, [debouncedAPIUpdate]);
 
+  // Track artifact changes and create diff messages
+  const previousArtifactRef = useRef<ArtifactV3 | undefined>(undefined);
+  useEffect(() => {
+    if (!artifact) {
+      return;
+    }
+
+    const previousArtifact = previousArtifactRef.current;
+
+    // Check if artifact content has changed (new version created)
+    if (previousArtifact && artifact.currentIndex !== previousArtifact.currentIndex) {
+      const currentContent = artifact.contents.find(
+        (c) => c.index === artifact.currentIndex
+      );
+
+      if (currentContent) {
+        console.log('Creating diff message for artifact index:', artifact.currentIndex);
+        const diffMessage = new AIMessage({
+          content: "",
+          id: `artifact-diff-${artifact.currentIndex}-${uuidv4()}`,
+          additional_kwargs: {
+            artifactDiffInfo: {
+              messageId: `artifact-diff-${artifact.currentIndex}`,
+              artifactIndex: artifact.currentIndex,
+              previousIndex: previousArtifact.currentIndex,
+              changeType: previousArtifact.currentIndex === 0 ? "create" : "update",
+              timestamp: Date.now(),
+            },
+          },
+        });
+
+        setMessages((prev) => [...prev, diffMessage]);
+      }
+    }
+
+    previousArtifactRef.current = artifact;
+  }, [artifact]);
+
   useEffect(() => {
     if (!threadData.threadId) return;
     if (!messages.length || !artifact) return;

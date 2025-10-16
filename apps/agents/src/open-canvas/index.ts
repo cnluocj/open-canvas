@@ -4,7 +4,7 @@ import { customAction } from "./nodes/customAction.js";
 import { generateArtifact } from "./nodes/generate-artifact/index.js";
 import { generateFollowup } from "./nodes/generateFollowup.js";
 import { generatePath } from "./nodes/generate-path/index.js";
-import { reflectNode } from "./nodes/reflect.js";
+// import { reflectNode } from "./nodes/reflect.js";
 import { rewriteArtifact } from "./nodes/rewrite-artifact/index.js";
 import { rewriteArtifactTheme } from "./nodes/rewriteArtifactTheme.js";
 import { updateArtifact } from "./nodes/updateArtifact.js";

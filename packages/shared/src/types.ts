@@ -129,6 +129,14 @@ export interface TextHighlight {
   selectedText: string;
 }
 
+export interface ArtifactDiffInfo {
+  messageId: string;
+  artifactIndex: number;
+  previousIndex: number;
+  changeType: "create" | "update";
+  timestamp: number;
+}
+
 export interface CustomQuickAction {
   /**
    * A UUID for the quick action. Used to identify the quick action.

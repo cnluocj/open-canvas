@@ -8,6 +8,7 @@ export const HAS_ASSISTANT_COOKIE_BEEN_SET = "has_oc_assistant_id_been_set";
 export const OC_HAS_SEEN_CUSTOM_ASSISTANTS_ALERT =
   "oc_has_seen_custom_assistants_alert";
 export const WEB_SEARCH_RESULTS_QUERY_PARAM = "webSearchResults";
+export const ARTIFACT_DIFF_QUERY_PARAM = "artifactDiff";
 
 export const ALLOWED_AUDIO_TYPES = new Set([
   "audio/mp3",

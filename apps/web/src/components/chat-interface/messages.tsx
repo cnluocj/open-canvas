@@ -24,8 +24,8 @@ import { ContextDocumentsUI } from "../tool-hooks/AttachmentsToolUI";
 import { HumanMessage } from "@langchain/core/messages";
 import { OC_HIDE_FROM_UI_KEY } from "@opencanvas/shared/constants";
 import { Button } from "../ui/button";
-import { WEB_SEARCH_RESULTS_QUERY_PARAM } from "@/constants";
-import { Globe } from "lucide-react";
+import { WEB_SEARCH_RESULTS_QUERY_PARAM, ARTIFACT_DIFF_QUERY_PARAM } from "@/constants";
+import { Globe, FileText } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 interface AssistantMessageProps {
@@ -100,6 +100,33 @@ const WebSearchMessageComponent = ({ message }: { message: MessageState }) => {
 
 const WebSearchMessage = React.memo(WebSearchMessageComponent);
 
+const ArtifactDiffMessageComponent = ({ message }: { message: MessageState }) => {
+  const [_, setShowDiffId] = useQueryState(ARTIFACT_DIFF_QUERY_PARAM);
+
+  const handleShowDiff = () => {
+    if (!message.id) {
+      return;
+    }
+
+    setShowDiffId(message.id);
+  };
+
+  return (
+    <div className="flex mx-8">
+      <Button
+        onClick={handleShowDiff}
+        variant="secondary"
+        className="bg-purple-50 hover:bg-purple-100 transition-all ease-in-out duration-200 w-full"
+      >
+        <FileText className="size-4 mr-2" />
+        View Document Changes
+      </Button>
+    </div>
+  );
+};
+
+const ArtifactDiffMessage = React.memo(ArtifactDiffMessageComponent);
+
 export const AssistantMessage: FC<AssistantMessageProps> = ({
   runId,
   feedbackSubmitted,
@@ -109,6 +136,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const { isLast } = message;
   const isThinkingMessage = message.id.startsWith("thinking-");
   const isWebSearchMessage = message.id.startsWith("web-search-results-");
+  const isArtifactDiffMessage = message.id.startsWith("artifact-diff-");
 
   if (isThinkingMessage) {
     return <ThinkingAssistantMessage message={message} />;
@@ -116,6 +144,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   if (isWebSearchMessage) {
     return <WebSearchMessage message={message} />;
+  }
+
+  if (isArtifactDiffMessage) {
+    return <ArtifactDiffMessage message={message} />;
   }
 
   return (
