@@ -120,7 +120,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("customAction", customAction)
   .addNode("generateFollowup", generateFollowup)
   .addNode("cleanState", cleanState)
-  .addNode("reflect", reflectNode)
+  // .addNode("reflect", reflectNode)
   .addNode("generateTitle", generateTitleNode)
   .addNode("summarizer", summarizer)
   .addNode("webSearch", webSearchGraph)
@@ -149,8 +149,9 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   // End edges
   .addEdge("replyToGeneralInput", "cleanState")
   // Only reflect if an artifact was generated/updated.
-  .addEdge("generateFollowup", "reflect")
-  .addEdge("reflect", "cleanState")
+  // .addEdge("generateFollowup", "reflect")
+  // .addEdge("reflect", "cleanState")
+  .addEdge("generateFollowup", "cleanState")
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
     END,
     "generateTitle",
