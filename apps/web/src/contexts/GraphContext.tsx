@@ -186,14 +186,15 @@ export function GraphProvider({ children }: { children: ReactNode }) {
 
     const previousArtifact = previousArtifactRef.current;
 
-    // Check if artifact content has changed (new version created)
-    if (previousArtifact && artifact.currentIndex !== previousArtifact.currentIndex) {
+    // Only create diff message when a NEW version is created (contents array grows)
+    // Don't create when user manually switches between existing versions
+    if (previousArtifact && artifact.contents.length > previousArtifact.contents.length) {
       const currentContent = artifact.contents.find(
         (c) => c.index === artifact.currentIndex
       );
 
       if (currentContent) {
-        console.log('Creating diff message for artifact index:', artifact.currentIndex);
+        console.log('Creating diff message for new artifact version:', artifact.currentIndex);
         const diffMessage = new AIMessage({
           content: "",
           id: `artifact-diff-${artifact.currentIndex}-${uuidv4()}`,
@@ -201,8 +202,8 @@ export function GraphProvider({ children }: { children: ReactNode }) {
             artifactDiffInfo: {
               messageId: `artifact-diff-${artifact.currentIndex}`,
               artifactIndex: artifact.currentIndex,
-              previousIndex: previousArtifact.currentIndex,
-              changeType: previousArtifact.currentIndex === 0 ? "create" : "update",
+              previousIndex: artifact.currentIndex - 1,
+              changeType: artifact.currentIndex === 1 ? "create" : "update",
               timestamp: Date.now(),
             },
           },
