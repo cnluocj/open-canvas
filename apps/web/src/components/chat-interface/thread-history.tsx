@@ -47,7 +47,7 @@ const ThreadItem = (props: ThreadProps) => {
       </Button>
       {isHovering && (
         <TooltipIconButton
-          tooltip="Delete thread"
+          tooltip="删除会话"
           variant="ghost"
           onClick={props.onDelete}
         >
@@ -152,13 +152,13 @@ const groupThreads = (
 const prettifyDateLabel = (group: string): string => {
   switch (group) {
     case "today":
-      return "Today";
+      return "今天";
     case "yesterday":
-      return "Yesterday";
+      return "昨天";
     case "lastSevenDays":
-      return "Last 7 days";
+      return "最近 7 天";
     case "older":
-      return "Older";
+      return "更早";
     default:
       return group;
   }
@@ -213,8 +213,8 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
   const handleDeleteThread = async (id: string) => {
     if (!user) {
       toast({
-        title: "Failed to delete thread",
-        description: "User not found",
+        title: "删除会话失败",
+        description: "未找到用户",
         duration: 5000,
         variant: "destructive",
       });
@@ -238,7 +238,7 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <TooltipIconButton
-          tooltip="History"
+          tooltip="会话历史"
           variant="ghost"
           className="w-fit h-fit p-2"
         >
@@ -255,7 +255,7 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
       >
         <SheetTitle>
           <TighterText className="px-2 text-lg text-gray-600">
-            Chat History
+            会话历史
           </TighterText>
         </SheetTitle>
 
@@ -266,7 +266,7 @@ export function ThreadHistoryComponent(props: ThreadHistoryProps) {
             ))}
           </div>
         ) : !userThreads.length ? (
-          <p className="px-3 text-gray-500">No items found in history.</p>
+          <p className="px-3 text-gray-500">历史记录为空。</p>
         ) : (
           <ThreadsList groupedThreads={groupedThreads} />
         )}

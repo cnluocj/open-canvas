@@ -95,8 +95,8 @@ export function ModelConfigPanel({
       >
         <div className="grid gap-4">
           <ModelSettingSlider
-            title="Temperature"
-            description="Controls creativity - lower for focused outputs, higher for more variety and imagination."
+            title="温度"
+            description="控制创意程度——数值越低越专注，越高越多样、更富想象力。"
             value={modelConfig.temperatureRange.current}
             range={{
               min: modelConfig.temperatureRange.min,
@@ -107,8 +107,8 @@ export function ModelConfigPanel({
             disabled={TEMPERATURE_EXCLUDED_MODELS.some((m) => m === model.name)}
           />
           <ModelSettingSlider
-            title="Max tokens"
-            description="Set how long the AI's response can be - more tokens mean longer, more detailed responses."
+            title="最大 Token 数"
+            description="设定 AI 回复的长度上限——Token 越多，回复越长也越详细。"
             value={modelConfig.maxTokens.current}
             range={{
               min: modelConfig.maxTokens.min,
@@ -119,7 +119,7 @@ export function ModelConfigPanel({
           />
           <Button onClick={handleReset} variant="outline" className="mt-2">
             <ResetIcon className="mr-2 h-4 w-4" />
-            Reset to Defaults
+            恢复默认设置
           </Button>
         </div>
       </PopoverContent>
@@ -150,7 +150,7 @@ const ModelSettingSlider = ({
       )}
     >
       {title}
-      {disabled && " (disabled)"}
+      {disabled && "（已禁用）"}
     </h4>
     <p
       className={cn("text-sm text-muted-foreground", disabled && "opacity-50")}

@@ -38,7 +38,7 @@ function ViewRawText({
       transition={{ duration: 0.2 }}
     >
       <TooltipIconButton
-        tooltip={`View ${isRawView ? "rendered" : "raw"} markdown`}
+        tooltip={isRawView ? "查看渲染后的 Markdown" : "查看原始 Markdown"}
         variant="outline"
         delayDuration={400}
         onClick={() => setIsRawView((p) => !p)}
@@ -191,7 +191,7 @@ export function TextRendererComponent(props: TextRendererProps) {
             {
               index: 1,
               fullMarkdown: fullMarkdown,
-              title: "Untitled",
+              title: "未命名",
               type: "text",
             },
           ],
@@ -224,7 +224,7 @@ export function TextRendererComponent(props: TextRendererProps) {
             {
               index: 1,
               fullMarkdown: newRawMarkdown,
-              title: "Untitled",
+              title: "未命名",
               type: "text",
             },
           ],

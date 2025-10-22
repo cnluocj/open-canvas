@@ -8,33 +8,33 @@ import { ProgrammingLanguagesDropdown } from "../ui/programming-lang-dropdown";
 import { Button } from "../ui/button";
 
 const QUICK_START_PROMPTS_SEARCH = [
-  "Write a market analysis of AI chip manufacturers in 2025",
-  "Create a blog post about the latest climate change policies and their impact",
-  "Draft an investor update on renewable energy trends this quarter",
-  "Write a report on current cybersecurity threats in cloud computing",
-  "Analyze the latest developments in quantum computing for a tech newsletter",
-  "Create a summary of emerging medical breakthroughs in cancer treatment",
-  "Write about the impact of current interest rates on the housing market",
-  "Draft an article about breakthroughs in battery technology this year",
-  "Analyze current supply chain disruptions in semiconductor manufacturing",
-  "Write about how recent AI regulations affect business innovation",
+  "检索罕见心肌炎病例并整理诊疗要点",
+  "汇总胆结石 ERCP 术后并发症病例",
+  "查找儿童川崎病病例随访数据",
+  "收集胰腺假性囊肿介入治疗案例",
+  "整理多发性骨髓瘤最新病例系列",
+  "调研妊娠期甲状腺危象病例报道",
+  "汇总脑动脉瘤夹闭术后复发病例",
+  "检索肺部孤立结节的病理诊断案例",
+  "查找免疫检查点抑制剂相关肝炎病例",
+  "收集房颤合并卒中抗凝治疗病例",
 ];
 
 const QUICK_START_PROMPTS = [
-  "Write a bedtime story about a brave little robot",
-  "Create a function to calculate Fibonacci numbers in TypeScript",
-  "Draft a resignation letter for a position I've had for 2 years",
-  "Build a simple weather dashboard using React and Tailwind",
-  "Write a poem about artificial intelligence",
-  "Create a basic Express.js REST API with two endpoints",
-  "Draft a congratulatory speech for my sister's graduation",
-  "Build a command-line calculator in Python",
-  "Write instructions for making perfect scrambled eggs",
-  "Create a simple snake game using HTML canvas",
-  "Write me a TODO app in React",
-  "Explain why the sky is blue in a short essay",
-  "Help me draft an email to my professor Craig",
-  "Write a web scraping program in Python",
+  "撰写急性胰腺炎病例报告摘要",
+  "记录术后感染病例的诊疗过程",
+  "整理罕见肿瘤病例的影像特征",
+  "总结重症肺炎患者的治疗路径",
+  "描述儿科癫痫病例的用药调整",
+  "概述心衰合并肾损伤病程记录",
+  "撰写妊娠糖尿病病例随访纪要",
+  "总结卒中再通治疗的病例要点",
+  "记录多器官功能衰竭的救治经过",
+  "整理移植排斥反应的诊断流程",
+  "撰写糖尿病足病例的护理总结",
+  "总结罕见药物不良反应病例",
+  "记录高血压危象的救治细节",
+  "整理骨折延迟愈合病例观察",
 ];
 
 function getRandomPrompts(prompts: string[], count: number = 4): string[] {
@@ -100,21 +100,21 @@ const QuickStartButtons = (props: QuickStartButtonsProps) => {
   return (
     <div className="flex flex-col gap-8 items-center justify-center w-full">
       <div className="flex flex-col gap-6">
-        <p className="text-gray-600 text-sm">Start with a blank canvas</p>
+        <p className="text-gray-600 text-sm">从空白画布开始</p>
         <div className="flex flex-row gap-1 items-center justify-center w-full">
           <Button
             variant="outline"
             className="text-gray-500 hover:text-gray-700 transition-colors ease-in rounded-2xl flex items-center justify-center gap-2 w-[250px] h-[64px]"
             onClick={() => props.handleQuickStart("text")}
           >
-            New Markdown
+            新建 Markdown
             <NotebookPen />
           </Button>
           <ProgrammingLanguagesDropdown handleSubmit={handleLanguageSubmit} />
         </div>
       </div>
       <div className="flex flex-col gap-6 mt-2 w-full">
-        <p className="text-gray-600 text-sm">or with a message</p>
+        <p className="text-gray-600 text-sm">或从一条消息开始</p>
         {props.composer}
         <QuickStartPrompts searchEnabled={props.searchEnabled} />
       </div>
@@ -139,11 +139,11 @@ export const ThreadWelcome: FC<ThreadWelcomeProps> = (
       <div className="flex items-center justify-center mt-16 w-full">
         <div className="text-center max-w-3xl w-full">
           <Avatar className="mx-auto">
-            <AvatarImage src="/lc_logo.jpg" alt="LangChain Logo" />
+            <AvatarImage src="/lc_logo.jpg" alt="LangChain 徽标" />
             <AvatarFallback>LC</AvatarFallback>
           </Avatar>
           <TighterText className="mt-4 text-lg font-medium">
-            What would you like to write today?
+            今天想写点什么？
           </TighterText>
           <div className="mt-8 w-full">
             <QuickStartButtons

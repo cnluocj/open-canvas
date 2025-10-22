@@ -33,7 +33,7 @@ export function UploadedFiles({
           className="flex items-center gap-2 rounded-md bg-gray-50 px-2 py-1 border-gray-100 border-[1px]"
         >
           {file.type.includes("pdf") && (
-            <NextImage alt="PDF icon" src={PDFIcon} width={24} height={24} />
+            <NextImage alt="PDF 图标" src={PDFIcon} width={24} height={24} />
           )}
           {file.type.startsWith("text/") &&
             !ALLOWED_VIDEO_TYPE_ENDINGS.some((ending) =>
@@ -42,17 +42,17 @@ export function UploadedFiles({
             !ALLOWED_AUDIO_TYPE_ENDINGS.some((ending) =>
               file.name.endsWith(ending)
             ) && (
-              <NextImage alt="TXT icon" src={TXTIcon} width={24} height={24} />
+              <NextImage alt="TXT 图标" src={TXTIcon} width={24} height={24} />
             )}
           {ALLOWED_VIDEO_TYPE_ENDINGS.some((ending) =>
             file.name.endsWith(ending)
           ) && (
-            <NextImage alt="MP4 icon" src={MP4Icon} width={24} height={24} />
+            <NextImage alt="MP4 图标" src={MP4Icon} width={24} height={24} />
           )}
           {ALLOWED_AUDIO_TYPE_ENDINGS.some((ending) =>
             file.name.endsWith(ending)
           ) && (
-            <NextImage alt="MP3 icon" src={MP3Icon} width={24} height={24} />
+            <NextImage alt="MP3 图标" src={MP3Icon} width={24} height={24} />
           )}
           <p className="text-sm text-gray-600">{file.name}</p>
           {handleRemoveFile && (

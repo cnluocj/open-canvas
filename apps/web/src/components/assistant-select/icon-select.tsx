@@ -132,16 +132,16 @@ export function IconSelect({
             variant="outline"
             className="flex justify-between"
           >
-            Select an icon {open ? <Icons.ChevronUp /> : <Icons.ChevronDown />}
+            选择图标 {open ? <Icons.ChevronUp /> : <Icons.ChevronDown />}
           </Button>
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="h-[400px] w-[400px] ml-auto">
         <div className="sticky top-0 z-10 bg-white dark:bg-gray-950 p-2">
-          <DropdownMenuLabel className="px-2 pb-2">Icons</DropdownMenuLabel>
+          <DropdownMenuLabel className="px-2 pb-2">图标</DropdownMenuLabel>
           <Input
             disabled={allDisabled}
-            placeholder="Search icons..."
+            placeholder="搜索图标..."
             onChange={(e) => debouncedSearch(e.target.value)}
             onClick={(e) => e.stopPropagation()}
             className="mb-2"
@@ -151,7 +151,7 @@ export function IconSelect({
         <div className="overflow-y-auto max-h-[420px]" onScroll={handleScroll}>
           {startIndex > 0 && (
             <div className="py-2 text-center text-sm text-gray-500">
-              Scroll up for previous icons
+              向上滚动查看更多图标
             </div>
           )}
           {uniq(filteredIcons)
@@ -175,7 +175,7 @@ export function IconSelect({
             ))}
           {startIndex + WINDOW_SIZE < filteredIcons.length && (
             <div className="py-2 text-center text-sm text-gray-500">
-              Scroll down for more icons
+              向下滚动查看更多图标
             </div>
           )}
         </div>

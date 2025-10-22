@@ -22,7 +22,7 @@ const ThreadScrollToBottom: FC = () => {
   return (
     <ThreadPrimitive.ScrollToBottom asChild>
       <TooltipIconButton
-        tooltip="Scroll to bottom"
+        tooltip="滚动到底部"
         variant="outline"
         className="absolute -top-8 rounded-full disabled:invisible"
       >
@@ -73,8 +73,8 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
   const handleNewSession = async () => {
     if (!user) {
       toast({
-        title: "User not found",
-        description: "Failed to create thread without user",
+        title: "未找到用户",
+        description: "没有用户信息，无法创建会话。",
         duration: 5000,
         variant: "destructive",
       });
@@ -97,7 +97,7 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
           <ThreadHistory
             switchSelectedThreadCallback={switchSelectedThreadCallback}
           />
-          <TighterText className="text-xl">Open Canvas</TighterText>
+          <TighterText className="text-xl">GSCRMR AI 编辑器</TighterText>
           {!hasChatStarted && (
             <ModelSelector
               modelName={modelName}
@@ -111,7 +111,7 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
         {hasChatStarted ? (
           <div className="flex flex-row flex-1 gap-2 items-center justify-end">
             <TooltipIconButton
-              tooltip="Collapse Chat"
+              tooltip="折叠聊天"
               variant="ghost"
               className="w-8 h-8"
               delayDuration={400}
@@ -120,7 +120,7 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
               <PanelRightOpen className="text-gray-600" />
             </TooltipIconButton>
             <TooltipIconButton
-              tooltip="New chat"
+              tooltip="新建聊天"
               variant="ghost"
               className="w-8 h-8"
               delayDuration={400}

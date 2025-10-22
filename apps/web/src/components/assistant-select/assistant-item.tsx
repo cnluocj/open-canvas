@@ -50,7 +50,7 @@ export function AssistantItem({
         </span>
         {assistant.name}
         {isDefault && (
-          <span className="text-xs text-gray-500 ml-auto">{"(default)"}</span>
+          <span className="text-xs text-gray-500 ml-auto">{"（默认）"}</span>
         )}
         {isSelected && <span className="ml-auto">•</span>}
       </DropdownMenuItem>

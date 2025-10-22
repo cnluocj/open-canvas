@@ -61,17 +61,15 @@ const GH_DISCUSSION_URL = `https://github.com/langchain-ai/open-canvas/discussio
 const SystemPromptWhatsThis = (): React.ReactNode => (
   <span className="flex flex-col gap-1 text-sm text-gray-600">
     <p>
-      Custom system prompts will be passed to the LLM when generating, or
-      re-writing artifacts. They are <i>not</i> used for responding to general
-      queries in the chat, highlight to edit, or quick actions.
+      自定义系统提示词会在生成或重写作品时传递给 LLM，它们{" "}
+      <i>不会</i> 用于普通聊天、选中编辑或快捷操作的回复。
     </p>
     <p>
-      We&apos;re looking for feedback on how to best handle customizing
-      assistant prompts. To vote, and give feedback please visit{" "}
+      我们正在收集如何更好地定制助手提示词的反馈。欢迎访问{" "}
       <a href={GH_DISCUSSION_URL} target="_blank">
-        this GitHub discussion
-      </a>
-      .
+        GitHub 讨论帖
+      </a>{" "}
+      参与投票并留言。
     </p>
   </span>
 );
@@ -158,7 +156,7 @@ export function CreateEditAssistantDialog(
     e.preventDefault();
     if (!props.userId) {
       toast({
-        title: "User not found",
+        title: "未找到用户",
         variant: "destructive",
         duration: 5000,
       });
@@ -166,7 +164,7 @@ export function CreateEditAssistantDialog(
     }
     if (props.isEditing && !props.assistant) {
       toast({
-        title: "Assistant not found",
+        title: "未找到助手",
         variant: "destructive",
         duration: 5000,
       });
@@ -223,12 +221,12 @@ export function CreateEditAssistantDialog(
 
     if (success) {
       toast({
-        title: `Assistant ${props.isEditing ? "edited" : "created"} successfully`,
+        title: `助手${props.isEditing ? "更新" : "创建"}成功`,
         duration: 5000,
       });
     } else {
       toast({
-        title: `Failed to ${props.isEditing ? "edit" : "create"} assistant`,
+        title: `助手${props.isEditing ? "更新" : "创建"}失败`,
         variant: "destructive",
         duration: 5000,
       });
@@ -272,13 +270,12 @@ export function CreateEditAssistantDialog(
         <DialogHeader>
           <DialogTitle className="text-3xl font-light text-gray-800">
             <TighterText>
-              {props.isEditing ? "Edit" : "Create"} Assistant
+              {props.isEditing ? "编辑" : "创建"}助手
             </TighterText>
           </DialogTitle>
           <DialogDescription className="mt-2 text-md font-light text-gray-600">
             <TighterText>
-              Creating a new assistant allows you to tailor your reflections to
-              a specific context, as reflections are unique to assistants.
+              创建新助手可以让你为特定场景定制反思内容，因为每个助手都有独立的反思。
             </TighterText>
           </DialogDescription>
         </DialogHeader>
@@ -288,33 +285,33 @@ export function CreateEditAssistantDialog(
         >
           <Label htmlFor="name">
             <TighterText>
-              Name <span className="text-red-500">*</span>
+              名称 <span className="text-red-500">*</span>
             </TighterText>
           </Label>
           <Input
             disabled={props.allDisabled}
             required
             id="name"
-            placeholder="Work Emails"
+            placeholder="工作邮件"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
 
           <Label htmlFor="description">
-            <TighterText>Description</TighterText>
+            <TighterText>描述</TighterText>
           </Label>
           <Input
             disabled={props.allDisabled}
             required={false}
             id="description"
-            placeholder="Assistant for my work emails"
+            placeholder="用于处理我的工作邮件的助手"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
 
           <Label htmlFor="system-prompt">
             <TighterText className="flex items-center">
-              System Prompt
+              系统提示词
               <InlineContextTooltip cardContentClassName="w-[500px] ml-10">
                 <SystemPromptWhatsThis />
               </InlineContextTooltip>
@@ -324,7 +321,7 @@ export function CreateEditAssistantDialog(
             disabled={props.allDisabled}
             required={false}
             id="system-prompt"
-            placeholder="You are an expert email assistant..."
+            placeholder="你是一名专业的邮件助手……"
             value={systemPrompt}
             onChange={(e) => setSystemPrompt(e.target.value)}
             rows={5}
@@ -333,7 +330,7 @@ export function CreateEditAssistantDialog(
           <div className="flex w-full items-center justify-between gap-4">
             <div className="flex flex-col gap-4 items-start justify-start w-full">
               <Label htmlFor="icon">
-                <TighterText>Icon</TighterText>
+                <TighterText>图标</TighterText>
               </Label>
               <IconSelect
                 allDisabled={props.allDisabled}
@@ -348,7 +345,7 @@ export function CreateEditAssistantDialog(
             </div>
             <div className="flex flex-col gap-4 items-start justify-start w-full">
               <Label htmlFor="description">
-                <TighterText>Color</TighterText>
+                <TighterText>颜色</TighterText>
               </Label>
               <div className="flex gap-1 items-center justify-start w-full">
                 <ColorPicker
@@ -364,7 +361,7 @@ export function CreateEditAssistantDialog(
                   disabled={props.allDisabled}
                   required={false}
                   id="description"
-                  placeholder="Assistant for my work emails"
+                  placeholder="请输入颜色值，如 #4a90e2"
                   value={iconColor}
                   onChange={(e) => {
                     if (!e.target.value.startsWith("#")) {
@@ -394,7 +391,7 @@ export function CreateEditAssistantDialog(
               className="w-full"
               type="submit"
             >
-              <TighterText>Save</TighterText>
+              <TighterText>保存</TighterText>
             </Button>
             <Button
               disabled={props.allDisabled}
@@ -406,7 +403,7 @@ export function CreateEditAssistantDialog(
               className="w-[20%]"
               type="button"
             >
-              <TighterText>Cancel</TighterText>
+              <TighterText>取消</TighterText>
             </Button>
           </div>
         </form>

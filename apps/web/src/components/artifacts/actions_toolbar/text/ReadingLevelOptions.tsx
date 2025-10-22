@@ -27,7 +27,7 @@ export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
   return (
     <div className="flex flex-col gap-3 items-center w-full">
       <TooltipIconButton
-        tooltip="PhD"
+        tooltip="博士"
         variant="ghost"
         className="transition-colors w-[36px] h-[36px]"
         delayDuration={400}
@@ -36,7 +36,7 @@ export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
         <GraduationCap />
       </TooltipIconButton>
       <TooltipIconButton
-        tooltip="College"
+        tooltip="大学"
         variant="ghost"
         className="transition-colors w-[36px] h-[36px]"
         delayDuration={400}
@@ -45,7 +45,7 @@ export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
         <School />
       </TooltipIconButton>
       <TooltipIconButton
-        tooltip="Teenager"
+        tooltip="青少年"
         variant="ghost"
         className="transition-colors w-[36px] h-[36px]"
         delayDuration={400}
@@ -54,7 +54,7 @@ export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
         <PersonStanding />
       </TooltipIconButton>
       <TooltipIconButton
-        tooltip="Child"
+        tooltip="儿童"
         variant="ghost"
         className="transition-colors w-[36px] h-[36px]"
         delayDuration={400}
@@ -63,7 +63,7 @@ export function ReadingLevelOptions(props: ReadingLevelOptionsProps) {
         <Baby />
       </TooltipIconButton>
       <TooltipIconButton
-        tooltip="Pirate"
+        tooltip="海盗"
         variant="ghost"
         className="transition-colors w-[36px] h-[36px]"
         delayDuration={400}

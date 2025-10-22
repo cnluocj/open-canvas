@@ -42,13 +42,13 @@ export function DragAndDropWrapper({ children }: DragAndDropWrapperProps) {
             await composerRuntime.addAttachment(file);
           } else {
             toast({
-              title: "Incompatible file type",
+              title: "文件类型不兼容",
               description: (
                 <div className="flex flex-col gap-1 text-pretty">
-                  <p>This file {file.name} is not supported.</p>
+                  <p>文件 {file.name} 不受支持。</p>
                   <p>
-                    Received type <span className="font-mono">{file.type}</span>
-                    . Must be one of:{" "}
+                    接收到的类型为{" "}
+                    <span className="font-mono">{file.type}</span>，必须是以下类型之一：
                   </p>
                   <p className="font-mono text-wrap">
                     {attachmentAccept.split(",").join(", ")}
@@ -65,18 +65,16 @@ export function DragAndDropWrapper({ children }: DragAndDropWrapperProps) {
       } catch (e) {
         console.error(e);
         toast({
-          title: "Error",
-          description:
-            "Failed to add attachment. This is likely due to an incompatible file type.",
+          title: "错误",
+          description: "添加附件失败，可能是由于文件类型不兼容。",
           variant: "destructive",
           duration: 5000,
         });
       }
     } else {
       toast({
-        title: "Drag and drop disabled",
-        description:
-          "Drag and drop is disabled in this mode. Please try again later.",
+        title: "拖放功能已禁用",
+        description: "当前模式下无法拖放，请稍后再试。",
         duration: 5000,
       });
     }

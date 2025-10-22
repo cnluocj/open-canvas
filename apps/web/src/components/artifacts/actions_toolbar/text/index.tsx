@@ -28,13 +28,13 @@ export interface ActionsToolbarProps {
 const toolbarOptions: ToolbarOption[] = [
   {
     id: "translate",
-    tooltip: "Translate",
+    tooltip: "翻译",
     icon: <Languages className="w-[26px] h-[26px]" />,
     component: (props: SharedComponentProps) => <TranslateOptions {...props} />,
   },
   {
     id: "readingLevel",
-    tooltip: "Reading level",
+    tooltip: "阅读层级",
     icon: <BookOpen className="w-[26px] h-[26px]" />,
     component: (props: SharedComponentProps) => (
       <ReadingLevelOptions {...props} />
@@ -42,13 +42,13 @@ const toolbarOptions: ToolbarOption[] = [
   },
   {
     id: "adjustLength",
-    tooltip: "Adjust the length",
+    tooltip: "调整篇幅",
     icon: <SlidersVertical className="w-[26px] h-[26px]" />,
     component: (props: SharedComponentProps) => <LengthOptions {...props} />,
   },
   {
     id: "addEmojis",
-    tooltip: "Add emojis",
+    tooltip: "添加表情",
     icon: <SmilePlus className="w-[26px] h-[26px]" />,
     component: null,
   },
@@ -141,9 +141,7 @@ export function ActionsToolbar(props: ActionsToolbarProps) {
       ) : (
         <TooltipIconButton
           tooltip={
-            props.isTextSelected
-              ? "Quick actions disabled while text is selected"
-              : "Writing tools"
+            props.isTextSelected ? "选中文本时无法使用快捷操作" : "写作工具"
           }
           variant="outline"
           className={cn(

@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Open Canvas",
-  description: "Open Canvas Chat UX by LangChain",
+  title: "GSCRMR AI 编辑器",
+  description: "GSCRMR AI 编辑器 Chat UX by LangChain",
 };
 
 export default function RootLayout({

@@ -244,7 +244,7 @@ export default function ModelSelector({
       >
         <div className="flex items-center pr-2 truncate">
           <NextImage
-            alt="Model icon"
+            alt="模型图标"
             src={LLMIcon}
             width={14}
             height={14}

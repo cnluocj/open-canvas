@@ -79,7 +79,7 @@ const HighlightToDeleteText = (props: HighlightToDeleteTextProps) => {
                 {props.text}
               </motion.span>
             </TooltipTrigger>
-            <TooltipContent>Click to delete</TooltipContent>
+            <TooltipContent>点击删除</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )}

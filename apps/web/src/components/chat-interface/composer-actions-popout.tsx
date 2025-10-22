@@ -97,7 +97,7 @@ export function ComposerActionsPopOut(props: ComposerActionsPopOutProps) {
           />
           {searchEnabled && (
             <TooltipIconButton
-              tooltip="Web search"
+              tooltip="网络搜索"
               variant="ghost"
               className="size-7 flex-shrink-0 bg-blue-100 hover:bg-blue-100"
               onClick={() => setSearchEnabled((p) => !p)}
@@ -131,7 +131,7 @@ export function ComposerActionsPopOut(props: ComposerActionsPopOutProps) {
             >
               {!searchEnabled && (
                 <TooltipIconButton
-                  tooltip="Web search"
+                  tooltip="网络搜索"
                   variant="ghost"
                   className="size-7 flex-shrink-0 hover:bg-blue-100 transition-colors ease-in-out"
                   onClick={() => setSearchEnabled((p) => !p)}

@@ -10,8 +10,8 @@ interface NavigateArtifactHistoryProps {
 }
 
 export function NavigateArtifactHistory(props: NavigateArtifactHistoryProps) {
-  const prevTooltip = `Previous (${props.currentArtifactIndex - 1}/${props.totalArtifactVersions})`;
-  const nextTooltip = `Next (${props.currentArtifactIndex + 1}/${props.totalArtifactVersions})`;
+  const prevTooltip = `上一版本 (${props.currentArtifactIndex - 1}/${props.totalArtifactVersions})`;
+  const nextTooltip = `下一版本 (${props.currentArtifactIndex + 1}/${props.totalArtifactVersions})`;
 
   return (
     <div className="flex items-center justify-center gap-1">

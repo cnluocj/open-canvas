@@ -15,17 +15,17 @@ export function ArtifactTitle(props: ArtifactTitleProps) {
       <span className="mt-auto">
         {props.isArtifactSaved ? (
           <span className="flex items-center justify-start gap-1 text-gray-400">
-            <p className="text-xs font-light">Saved</p>
+            <p className="text-xs font-light">已保存</p>
             <CircleCheck className="w-[10px] h-[10px]" />
           </span>
         ) : !props.artifactUpdateFailed ? (
           <span className="flex items-center justify-start gap-1 text-gray-400">
-            <p className="text-xs font-light">Saving</p>
+            <p className="text-xs font-light">正在保存</p>
             <LoaderCircle className="animate-spin w-[10px] h-[10px]" />
           </span>
         ) : props.artifactUpdateFailed ? (
           <span className="flex items-center justify-start gap-1 text-red-300">
-            <p className="text-xs font-light">Failed to save</p>
+            <p className="text-xs font-light">保存失败</p>
             <CircleX className="w-[10px] h-[10px]" />
           </span>
         ) : null}

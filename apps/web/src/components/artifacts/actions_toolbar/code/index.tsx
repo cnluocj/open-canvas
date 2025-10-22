@@ -28,19 +28,19 @@ export interface CodeToolbarProps {
 const toolbarOptions: ToolbarOption[] = [
   {
     id: "addComments",
-    tooltip: "Add comments",
+    tooltip: "添加注释",
     icon: <MessageCircleCode className="w-[26px] h-[26px]" />,
     component: null,
   },
   {
     id: "addLogs",
-    tooltip: "Add logs",
+    tooltip: "添加日志",
     icon: <ScrollText className="w-[26px] h-[26px]" />,
     component: null,
   },
   {
     id: "portLanguage",
-    tooltip: "Port language",
+    tooltip: "移植到其他语言",
     icon: <BookA className="w-[26px] h-[26px]" />,
     component: (
       props: SharedComponentProps & { language: ProgrammingLanguageOptions }
@@ -48,7 +48,7 @@ const toolbarOptions: ToolbarOption[] = [
   },
   {
     id: "fixBugs",
-    tooltip: "Fix bugs",
+    tooltip: "修复缺陷",
     icon: <Bug className="w-[26px] h-[26px]" />,
     component: null,
   },
@@ -151,9 +151,7 @@ export function CodeToolBar(props: CodeToolbarProps) {
       ) : (
         <TooltipIconButton
           tooltip={
-            props.isTextSelected
-              ? "Quick actions disabled while text is selected"
-              : "Code tools"
+            props.isTextSelected ? "选中文本时无法使用快捷操作" : "代码工具"
           }
           variant="outline"
           className={cn(

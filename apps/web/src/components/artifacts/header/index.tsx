@@ -25,7 +25,7 @@ export function ArtifactHeader(props: ArtifactHeaderProps) {
       <div className="flex flex-row items-center justify-center gap-2">
         {props.chatCollapsed && (
           <TooltipIconButton
-            tooltip="Expand Chat"
+            tooltip="展开聊天"
             variant="ghost"
             className="ml-2 mb-1 w-8 h-8"
             delayDuration={400}

@@ -47,7 +47,7 @@ export function UserAuthForm({
           <div className="grid gap-1">
             <div className="pt-1 pb-[2px] px-1">
               <Label className="sr-only" htmlFor="email">
-                Email
+                邮箱
               </Label>
               <Input
                 id="email"
@@ -74,7 +74,7 @@ export function UserAuthForm({
               )}
             >
               <Label className="sr-only" htmlFor="password">
-                Password
+                密码
               </Label>
               <PasswordInput
                 id="password"
@@ -90,7 +90,7 @@ export function UserAuthForm({
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign Up with Email
+            使用邮箱注册
           </Button>
         </div>
       </form>
@@ -100,7 +100,7 @@ export function UserAuthForm({
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            或使用以下方式继续
           </span>
         </div>
       </div>

@@ -62,7 +62,7 @@ const ThinkingAssistantMessageComponent = ({
       className="w-full"
     >
       <AccordionItem value={`accordion-${id}`}>
-        <AccordionTrigger>Thoughts</AccordionTrigger>
+        <AccordionTrigger>思考过程</AccordionTrigger>
         <AccordionContent>{contentText}</AccordionContent>
       </AccordionItem>
     </Accordion>
@@ -92,7 +92,7 @@ const WebSearchMessageComponent = ({ message }: { message: MessageState }) => {
         className="bg-blue-50 hover:bg-blue-100 transition-all ease-in-out duration-200 w-full"
       >
         <Globe className="size-4 mr-2" />
-        Web Search Results
+        网络搜索结果
       </Button>
     </div>
   );
@@ -119,7 +119,7 @@ const ArtifactDiffMessageComponent = ({ message }: { message: MessageState }) =>
         className="bg-purple-50 hover:bg-purple-100 transition-all ease-in-out duration-200 w-full"
       >
         <FileText className="size-4 mr-2" />
-        View Document Changes
+        查看文档变更
       </Button>
     </div>
   );
@@ -211,7 +211,7 @@ const AssistantMessageBarComponent = ({
     >
       {feedbackSubmitted ? (
         <TighterText className="text-gray-500 text-sm">
-          Feedback received! Thank you!
+          已收到反馈，感谢支持！
         </TighterText>
       ) : (
         <>

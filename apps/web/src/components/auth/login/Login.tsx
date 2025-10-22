@@ -63,7 +63,7 @@ export function Login() {
           "absolute md:flex hidden right-4 top-4 md:right-8 md:top-8"
         )}
       >
-        Signup
+        注册
       </Link>
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
@@ -72,16 +72,16 @@ export function Login() {
             src="/lc_logo.jpg"
             width={36}
             height={36}
-            alt="LangChain Logo"
+            alt="LangChain 徽标"
             className="rounded-full"
           />
-          Open Canvas
+          GSCRMR AI 编辑器
         </div>
       </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">登录</h1>
             <Link
               href="/auth/signup"
               className={cn(
@@ -89,7 +89,7 @@ export function Login() {
                 "md:hidden flex"
               )}
             >
-              Signup
+              注册
             </Link>
           </div>
           <UserAuthForm
@@ -98,7 +98,7 @@ export function Login() {
           />
           {isError && (
             <p className="text-red-500 text-sm text-center">
-              There was an error signing into your account. Please try again.
+              登录账号时出现错误，请稍后重试。
             </p>
           )}
         </div>

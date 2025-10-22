@@ -36,21 +36,24 @@ export const FeedbackButton: FC<FeedbackButtonProps> = ({
         setFeedbackSubmitted(true);
       } else {
         toast({
-          title: "Failed to submit feedback",
-          description: "Please try again later.",
+          title: "反馈提交失败",
+          description: "请稍后再试。",
           variant: "destructive",
         });
       }
     } catch (_) {
       toast({
-        title: "Failed to submit feedback",
-        description: "Please try again later.",
+        title: "反馈提交失败",
+        description: "请稍后再试。",
         variant: "destructive",
       });
     }
   };
 
-  const tooltip = `Give ${icon === "thumbs-up" ? "positive" : "negative"} feedback on this run`;
+  const tooltip =
+    icon === "thumbs-up"
+      ? "对本次运行给出正面反馈"
+      : "对本次运行给出负面反馈";
 
   return (
     <TooltipIconButton

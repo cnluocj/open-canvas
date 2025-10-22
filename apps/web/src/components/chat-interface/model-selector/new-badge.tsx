@@ -22,7 +22,7 @@ export function IsNewBadge() {
           "text-gray-700 text-xs w-14"
         )}
       >
-        New!
+        新增！
       </Badge>
     </div>
   );

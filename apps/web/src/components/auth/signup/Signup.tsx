@@ -63,7 +63,7 @@ export function Signup() {
           "absolute md:flex hidden right-4 top-4 md:right-8 md:top-8"
         )}
       >
-        Login
+        登录
       </Link>
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
         <div className="absolute inset-0 bg-zinc-900" />
@@ -72,17 +72,17 @@ export function Signup() {
             src="/lc_logo.jpg"
             width={36}
             height={36}
-            alt="LangChain Logo"
+            alt="LangChain 徽标"
             className="rounded-full"
           />
-          Open Canvas
+          GSCRMR AI 编辑器
         </div>
       </div>
       <div className="lg:p-8">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
+              创建账号
             </h1>
             <Link
               href="/auth/login"
@@ -91,10 +91,10 @@ export function Signup() {
                 "md:hidden flex"
               )}
             >
-              Login
+              登录
             </Link>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to create your account
+              在下方输入邮箱即可创建账号
             </p>
           </div>
           <UserAuthForm
@@ -103,7 +103,7 @@ export function Signup() {
           />
           {isError && (
             <p className="text-red-500 text-sm text-center">
-              There was an error creating your account. Please try again.
+              创建账号时出现错误，请稍后重试。
             </p>
           )}
         </div>

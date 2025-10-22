@@ -20,7 +20,7 @@ export function CopyText(props: CopyTextProps) {
       transition={{ duration: 0.2 }}
     >
       <TooltipIconButton
-        tooltip="Copy"
+        tooltip="复制"
         variant="outline"
         className="transition-colors"
         delayDuration={400}
@@ -31,16 +31,15 @@ export function CopyText(props: CopyTextProps) {
               : props.currentArtifactContent.fullMarkdown;
             navigator.clipboard.writeText(text).then(() => {
               toast({
-                title: "Copied to clipboard",
-                description: "The canvas content has been copied.",
+                title: "已复制到剪贴板",
+                description: "画布内容已复制。",
                 duration: 5000,
               });
             });
           } catch (_) {
             toast({
-              title: "Copy error",
-              description:
-                "Failed to copy the canvas content. Please try again.",
+              title: "复制失败",
+              description: "无法复制画布内容，请重试。",
               duration: 5000,
             });
           }

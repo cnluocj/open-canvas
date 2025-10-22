@@ -61,7 +61,7 @@ const DropdownMenuItemWithDelete = ({
       </DropdownMenuItem>
       <TooltipIconButton
         disabled={disabled}
-        tooltip="Edit action"
+        tooltip="编辑操作"
         variant="ghost"
         onClick={onEdit}
         className={cn("ml-1", isHovering ? "visible" : "invisible")}
@@ -70,7 +70,7 @@ const DropdownMenuItemWithDelete = ({
       </TooltipIconButton>
       <TooltipIconButton
         disabled={disabled}
-        tooltip="Delete action"
+        tooltip="删除操作"
         variant="ghost"
         onClick={onDelete}
         className={cn(isHovering ? "visible" : "invisible")}
@@ -132,8 +132,8 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
   const handleDelete = async (id: string) => {
     if (!user) {
       toast({
-        title: "Failed to delete",
-        description: "User not found",
+        title: "删除失败",
+        description: "未找到用户",
         variant: "destructive",
         duration: 5000,
       });
@@ -147,7 +147,7 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
       );
       if (deletionSuccess) {
         toast({
-          title: "Custom quick action deleted successfully",
+          title: "自定义快捷操作删除成功",
         });
         setCustomQuickActions((actions) => {
           if (!actions) return actions;
@@ -155,13 +155,13 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
         });
       } else {
         toast({
-          title: "Failed to delete custom quick action",
+          title: "删除自定义快捷操作失败",
           variant: "destructive",
         });
       }
     } catch (_) {
       toast({
-        title: "Failed to delete custom quick action",
+        title: "删除自定义快捷操作失败",
         variant: "destructive",
       });
     }
@@ -178,9 +178,7 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
       <DropdownMenuTrigger className="fixed bottom-4 right-20" asChild>
         <TooltipIconButton
           tooltip={
-            props.isTextSelected
-              ? "Quick actions disabled while text is selected"
-              : "Custom quick actions"
+            props.isTextSelected ? "选中文本时无法使用快捷操作" : "自定义快捷操作"
           }
           variant="outline"
           className={cn(
@@ -203,17 +201,17 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-h-[600px] max-w-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         <DropdownMenuLabel>
-          <TighterText>Custom Quick Actions</TighterText>
+          <TighterText>自定义快捷操作</TighterText>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {isLoadingQuickActions && !customQuickActions?.length ? (
           <span className="text-sm text-gray-600 flex items-center justify-start gap-1 p-2">
-            Loading
+            加载中
             <LoaderCircle className="w-4 h-4 animate-spin" />
           </span>
         ) : !customQuickActions?.length ? (
           <TighterText className="text-sm text-gray-600 p-2">
-            No custom quick actions found.
+            暂无自定义快捷操作。
           </TighterText>
         ) : (
           <div className="max-h-[450px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
@@ -236,7 +234,7 @@ export function CustomQuickActions(props: CustomQuickActionsProps) {
           className="flex items-center justify-start gap-1"
         >
           <CirclePlus className="w-4 h-4" />
-          <TighterText className="font-medium">New</TighterText>
+          <TighterText className="font-medium">新建</TighterText>
         </DropdownMenuItem>
       </DropdownMenuContent>
       <NewCustomQuickActionDialog

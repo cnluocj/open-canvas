@@ -11,9 +11,7 @@ import { useState } from "react";
 const ContextDocumentsWhatsThis = (): React.ReactNode => (
   <span className="flex flex-col gap-1 text-sm text-gray-600">
     <p className="text-sm text-gray-600">
-      Context documents are text or PDF files which will be included in the
-      LLM&apos;s context for ALL interactions <i>except</i> quick actions, when
-      generating, re-writing and editing artifacts.
+      上下文文档会在生成、改写和编辑作品时加入 LLM 的上下文，除了快捷操作以外的所有交互都会使用这些文本或 PDF 文件。
     </p>
   </span>
 );
@@ -49,7 +47,7 @@ function UrlInputRow({
     <div className="flex gap-2 items-center">
       <Input
         type="url"
-        placeholder="Enter URL"
+        placeholder="输入链接"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="flex-1"
@@ -114,10 +112,9 @@ export function ContextDocuments(props: ContextDocumentsProps) {
     <div className="flex flex-col items-start justify-start gap-4 w-full">
       <Label htmlFor="context-documents">
         <TighterText className="flex items-center">
-          Context Documents{" "}
+          上下文文档{" "}
           <span className="text-gray-600 text-sm ml-1">
-            (Max 20 files - Documents: 10MB each, Audio: 25MB each, Video: 1GB
-            each)
+            （最多 20 个文件：文档单个 10MB、音频 25MB、视频 1GB）
           </span>
           <InlineContextTooltip cardContentClassName="w-[500px] ml-10">
             <ContextDocumentsWhatsThis />
@@ -140,7 +137,7 @@ export function ContextDocuments(props: ContextDocumentsProps) {
           const totalFileCount = existingFiles.length + newFiles.length;
 
           if (totalFileCount > 20) {
-            alert("You can only upload up to 20 files in total");
+            alert("最多只能上传 20 个文件");
             e.target.value = "";
             return;
           }
@@ -157,15 +154,15 @@ export function ContextDocuments(props: ContextDocumentsProps) {
 
             // Check size limits based on file type
             if (isAudio && file.size > twentyFiveMbBytes) {
-              alert(`Audio file "${file.name}" exceeds the 25MB size limit`);
+              alert(`音频文件 "${file.name}" 超过了 25MB 的大小限制`);
               e.target.value = "";
               return;
             } else if (isVideo && file.size > oneGbBytes) {
-              alert(`Video file "${file.name}" exceeds the 1GB size limit`);
+              alert(`视频文件 "${file.name}" 超过了 1GB 的大小限制`);
               e.target.value = "";
               return;
             } else if (!isAudio && !isVideo && file.size > tenMbBytes) {
-              alert(`Document "${file.name}" exceeds the 10MB size limit`);
+              alert(`文档 "${file.name}" 超过了 10MB 的大小限制`);
               e.target.value = "";
               return;
             }
@@ -184,7 +181,7 @@ export function ContextDocuments(props: ContextDocumentsProps) {
       />
       {loadingDocuments && (
         <span className="text-gray-600 text-sm flex gap-2">
-          Loading context documents{" "}
+          正在加载上下文文档{" "}
           <LoaderCircle className="animate-spin w-4 h-4" />
         </span>
       )}
@@ -213,7 +210,7 @@ export function ContextDocuments(props: ContextDocumentsProps) {
             }}
             disabled={allDisabled}
           >
-            Add links
+            添加链接
           </Button>
         )}
       </div>

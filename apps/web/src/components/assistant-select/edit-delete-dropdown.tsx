@@ -35,7 +35,7 @@ export function EditDeleteDropdown({
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
-  const tooltipText = allowDelete ? "Edit/Delete" : "Edit";
+  const tooltipText = allowDelete ? "编辑/删除" : "编辑";
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -68,13 +68,13 @@ export function EditDeleteDropdown({
               const res = await deleteAssistant(selectedAssistant.assistant_id);
               if (res) {
                 toast({
-                  title: "Assistant deleted",
+                  title: "助手已删除",
                   duration: 5000,
                 });
               } else {
                 toast({
-                  title: "Error",
-                  description: "Failed to delete the assistant.",
+                  title: "错误",
+                  description: "删除助手失败。",
                   variant: "destructive",
                   duration: 5000,
                 });
