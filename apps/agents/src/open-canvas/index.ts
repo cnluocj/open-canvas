@@ -12,6 +12,7 @@ import { replyToGeneralInput } from "./nodes/replyToGeneralInput.js";
 import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme.js";
 import { generateTitleNode } from "./nodes/generateTitle.js";
 import { updateHighlightedText } from "./nodes/updateHighlightedText.js";
+import { smartEditArtifact } from "./nodes/smartEditArtifact.js";
 import { OpenCanvasGraphAnnotation } from "./state.js";
 import { summarizer } from "./nodes/summarizer.js";
 import { graph as webSearchGraph } from "../web-search/index.js";
@@ -116,6 +117,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("rewriteCodeArtifactTheme", rewriteCodeArtifactTheme)
   .addNode("updateArtifact", updateArtifact)
   .addNode("updateHighlightedText", updateHighlightedText)
+  .addNode("smartEditArtifact", smartEditArtifact)
   .addNode("generateArtifact", generateArtifact)
   .addNode("customAction", customAction)
   .addNode("generateFollowup", generateFollowup)
@@ -133,14 +135,41 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
     "replyToGeneralInput",
     "generateArtifact",
     "rewriteArtifact",
+    "smartEditArtifact",
     "customAction",
     "updateHighlightedText",
     "webSearch",
   ])
+  // Smart Edit routing
+  .addConditionalEdges("smartEditArtifact", routeNode, [
+    "updateArtifact",
+    "updateHighlightedText",
+    "rewriteArtifact",
+  ])
   // Edges
   .addEdge("generateArtifact", "generateFollowup")
-  .addEdge("updateArtifact", "generateFollowup")
-  .addEdge("updateHighlightedText", "generateFollowup")
+  .addConditionalEdges(
+    "updateArtifact",
+    (state) => {
+      // Check for remaining Smart Edits
+      if (state.remainingSmartEdits && state.remainingSmartEdits.length > 0) {
+        return "smartEditArtifact";
+      }
+      return "generateFollowup";
+    },
+    ["smartEditArtifact", "generateFollowup"]
+  )
+  .addConditionalEdges(
+    "updateHighlightedText",
+    (state) => {
+      // Check for remaining Smart Edits
+      if (state.remainingSmartEdits && state.remainingSmartEdits.length > 0) {
+        return "smartEditArtifact";
+      }
+      return "generateFollowup";
+    },
+    ["smartEditArtifact", "generateFollowup"]
+  )
   .addEdge("rewriteArtifact", "generateFollowup")
   .addEdge("rewriteArtifactTheme", "generateFollowup")
   .addEdge("rewriteCodeArtifactTheme", "generateFollowup")

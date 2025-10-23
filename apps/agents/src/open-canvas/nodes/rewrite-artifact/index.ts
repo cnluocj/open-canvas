@@ -47,6 +47,9 @@ export const rewriteArtifact = async (
     ? currentArtifactContent.fullMarkdown
     : currentArtifactContent.code;
 
+  const contextDocumentMessages = await createContextDocumentMessages(config);
+
+  // Generate the full rewritten artifact
   const formattedPrompt = buildPrompt({
     artifactContent,
     memoriesAsString,
@@ -59,7 +62,6 @@ export const rewriteArtifact = async (
     ? `${userSystemPrompt}\n${formattedPrompt}`
     : formattedPrompt;
 
-  const contextDocumentMessages = await createContextDocumentMessages(config);
   const isO1MiniModel = isUsingO1MiniModel(config);
   const newArtifactResponse = await smallModelWithConfig.invoke([
     { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },

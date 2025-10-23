@@ -715,6 +715,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
               taskName === "rewrite_artifact_model_call" &&
               rewriteArtifactMeta
             ) {
+
               if (!artifact) {
                 toast({
                   title: "Error",

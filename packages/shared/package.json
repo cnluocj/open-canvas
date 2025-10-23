@@ -12,6 +12,11 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
+    "./utils/editing": {
+      "types": "./dist/utils/editing/index.d.ts",
+      "import": "./dist/utils/editing/index.js",
+      "require": "./dist/utils/editing/index.js"
+    },
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",

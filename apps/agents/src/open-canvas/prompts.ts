@@ -219,8 +219,8 @@ Rules and guidelines:
 // ----- End text modification prompts -----
 
 export const ROUTE_QUERY_OPTIONS_HAS_ARTIFACTS = `
-- 'rewriteArtifact': The user has requested some sort of change, or revision to the artifact, or to write a completely new artifact independent of the current artifact. Use their recent message and the currently selected artifact (if any) to determine what to do. You should ONLY select this if the user has clearly requested a change to the artifact, otherwise you should lean towards either generating a new artifact or responding to their query.
-  It is very important you do not edit the artifact unless clearly requested by the user.
+- 'smartEditArtifact': The user has requested a targeted, specific change to part of the artifact (e.g., "make the summary more detailed", "fix the typo in the introduction", "add more details to the second paragraph", "update the code comments"). Use this when the request is focused on modifying specific sections or elements while keeping most of the artifact unchanged. This is preferred for localized, surgical edits.
+- 'rewriteArtifact': The user has requested a major change, complete rewrite, or transformation of the entire artifact (e.g., "rewrite this in a completely different style", "make it 3x longer", "restructure the entire document", "change the whole approach", "completely rewrite this"). Use this for broad, comprehensive changes that affect the entire artifact or require fundamental restructuring.
 - 'replyToGeneralInput': The user submitted a general input which does not require making an update, edit or generating a new artifact. This should ONLY be used if you are ABSOLUTELY sure the user does NOT want to make an edit, update or generate a new artifact.`;
 
 export const ROUTE_QUERY_OPTIONS_NO_ARTIFACTS = `

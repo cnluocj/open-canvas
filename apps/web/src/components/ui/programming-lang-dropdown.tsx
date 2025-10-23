@@ -6,8 +6,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-import { Code } from "lucide-react";
-import { Button } from "./button";
 import { TooltipIconButton } from "./assistant-ui/tooltip-icon-button";
 
 interface ProgrammingLanguageListProps {

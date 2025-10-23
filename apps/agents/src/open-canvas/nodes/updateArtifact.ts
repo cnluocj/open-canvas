@@ -8,6 +8,7 @@ import {
   ArtifactV3,
   Reflections,
 } from "@opencanvas/shared/types";
+import { performSmartEdit } from "@opencanvas/shared/utils/editing";
 import {
   createContextDocumentMessages,
   ensureStoreInConfig,
@@ -122,14 +123,36 @@ export const updateArtifact = async (
     recentHumanMessage,
   ]);
 
-  const entireTextBefore = currentArtifactContent.code.slice(
-    0,
-    state.highlightedCode.startCharIndex
-  );
-  const entireTextAfter = currentArtifactContent.code.slice(
-    state.highlightedCode.endCharIndex
-  );
-  const entireUpdatedContent = `${entireTextBefore}${updatedArtifact.content}${entireTextAfter}`;
+  // Use smart editing to replace the highlighted code
+  // This handles indentation, whitespace, and special characters intelligently
+  const editResult = performSmartEdit({
+    content: currentArtifactContent.code,
+    oldString: highlightedText,
+    newString: updatedArtifact.content as string,
+    expectedReplacements: 1,
+  });
+
+  let entireUpdatedContent: string;
+  if (editResult.success && editResult.newContent) {
+    // Smart edit succeeded - use the intelligently updated content
+    entireUpdatedContent = editResult.newContent;
+
+    // Log which matching strategy was used for telemetry
+    console.log(`[Smart Edit] Used ${editResult.matchLevel} matching strategy`);
+  } else {
+    // Fallback to simple concatenation if smart edit fails
+    console.warn(
+      `[Smart Edit] Failed with error: ${editResult.error?.message}. Falling back to simple concatenation.`
+    );
+    const entireTextBefore = currentArtifactContent.code.slice(
+      0,
+      state.highlightedCode.startCharIndex
+    );
+    const entireTextAfter = currentArtifactContent.code.slice(
+      state.highlightedCode.endCharIndex
+    );
+    entireUpdatedContent = `${entireTextBefore}${updatedArtifact.content}${entireTextAfter}`;
+  }
 
   const newArtifactContent: ArtifactCodeV3 = {
     ...currentArtifactContent,

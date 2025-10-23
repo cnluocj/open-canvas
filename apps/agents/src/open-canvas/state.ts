@@ -133,6 +133,15 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    * The search results to include in context.
    */
   webSearchResults: Annotation<SearchResult[] | undefined>,
+  /**
+   * Remaining Smart Edit operations to process. Used for multi-edit scenarios
+   * where edits are applied sequentially with streaming output.
+   */
+  remainingSmartEdits: Annotation<Array<{
+    oldString: string;
+    newString: string;
+    explanation: string;
+  }> | undefined>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<
