@@ -468,6 +468,15 @@ export function GraphProvider({ children }: { children: ReactNode }) {
           if (event === "on_chain_start") {
             if (langgraphNode === "updateHighlightedText") {
               highlightedText = nodeInput?.highlightedText;
+              updatedArtifactStartContent = undefined;
+              updatedArtifactRestContent = undefined;
+              isFirstUpdate = true;
+            }
+
+            if (langgraphNode === "updateArtifact") {
+              updatedArtifactStartContent = undefined;
+              updatedArtifactRestContent = undefined;
+              isFirstUpdate = true;
             }
 
             if (langgraphNode === "queryGenerator" && !webSearchMessageId) {
