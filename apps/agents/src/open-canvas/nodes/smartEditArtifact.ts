@@ -7,10 +7,10 @@ import {
   getArtifactContent,
   isArtifactMarkdownContent,
 } from "@opencanvas/shared/utils/artifacts";
+import { performSmartEdit } from "@opencanvas/shared/utils/editing";
 import { analyzeEditType } from "./rewrite-artifact/utils.js";
 import { createContextDocumentMessages } from "../../utils.js";
 import { BaseMessage } from "@langchain/core/messages";
-import { rewriteArtifact } from "./rewrite-artifact/index.js";
 
 /**
  * Smart Edit node: Analyzes user requests and applies targeted edits to specific
@@ -48,18 +48,36 @@ export const smartEditArtifact = async (
 
     console.log("[Smart Edit] Analyzing edit request...");
     const contextDocumentMessages = await createContextDocumentMessages(config);
+
+    // Get recent conversation history (last 5 messages before the current one)
+    // This provides context for clarification dialogs
+    const currentMessageIndex = state._messages.findIndex(
+      (msg) => msg.id === recentHumanMessage.id
+    );
+    const conversationHistory =
+      currentMessageIndex > 0
+        ? state._messages.slice(Math.max(0, currentMessageIndex - 5), currentMessageIndex)
+        : [];
+
     const editAnalysis = await analyzeEditType({
       artifactContent,
       recentHumanMessage,
       config,
       contextDocumentMessages: contextDocumentMessages as unknown as BaseMessage[],
+      conversationHistory,
     });
 
     if (!editAnalysis?.edits || editAnalysis.edits.length === 0) {
       console.log(
-        "[Smart Edit] No edits detected, falling back to full rewrite"
+        "[Smart Edit] No edits detected, routing to clarifyIntent"
       );
-      return rewriteArtifact(state, config);
+      console.log(`[Smart Edit] Reasoning: ${editAnalysis?.reasoning || "No reasoning provided"}`);
+
+      // Route to clarifyIntent node to ask user for clarification
+      return {
+        smartEditAnalysisReasoning: editAnalysis?.reasoning || "The request was too vague to identify specific edits.",
+        next: "clarifyIntent",
+      };
     }
 
     editsToProcess = editAnalysis.edits;
@@ -78,18 +96,38 @@ export const smartEditArtifact = async (
 
   console.log(`[Smart Edit] Processing edit: ${currentEdit.explanation}`);
 
-  // Find the position of oldString in the current artifact
-  const startCharIndex = artifactContent.indexOf(currentEdit.oldString);
-  if (startCharIndex === -1) {
+  // Use smart matching to find the oldString with flexible matching strategies
+  // This handles whitespace variations, indentation differences, and special characters
+  const matchResult = performSmartEdit({
+    content: artifactContent,
+    oldString: currentEdit.oldString,
+    newString: currentEdit.newString,
+    expectedReplacements: 1,
+  });
+
+  if (!matchResult.success) {
     console.warn(
-      `[Smart Edit] Could not locate edit target, falling back to full rewrite`
+      `[Smart Edit] Could not locate edit target after trying all matching strategies`
     );
+    console.warn(`[Smart Edit] Error: ${matchResult.error?.message}`);
     console.warn(`[Smart Edit] Looking for: ${currentEdit.oldString.substring(0, 100)}...`);
-    return rewriteArtifact(state, config);
+
+    // Route to clarifyIntent to ask user for more specific location
+    return {
+      smartEditAnalysisReasoning: `I found what you want to change, but couldn't locate it precisely in the document. ${matchResult.error?.message}. Could you provide more context about where this change should be made?`,
+      next: "clarifyIntent",
+    };
   }
 
   console.log(
-    `[Smart Edit] Found edit target at position ${startCharIndex}-${startCharIndex + currentEdit.oldString.length}`
+    `[Smart Edit] Found edit target using ${matchResult.matchLevel} matching strategy`
+  );
+
+  // Find the position of oldString for code artifacts (markdown artifacts don't need this)
+  const startCharIndex = artifactContent.indexOf(currentEdit.oldString);
+
+  console.log(
+    `[Smart Edit] Edit target position: ${startCharIndex !== -1 ? `${startCharIndex}-${startCharIndex + currentEdit.oldString.length}` : 'position will be determined by updateHighlightedText'}`
   );
 
   // Set appropriate highlighted field based on artifact type

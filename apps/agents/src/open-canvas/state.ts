@@ -142,6 +142,11 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
     newString: string;
     explanation: string;
   }> | undefined>,
+  /**
+   * The reasoning from Smart Edit analysis when edits array is empty.
+   * Used by clarifyIntent node to generate helpful clarification questions.
+   */
+  smartEditAnalysisReasoning: Annotation<string | undefined>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<

@@ -495,7 +495,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
           if (event === "on_chat_model_stream") {
             // These are generating new messages to insert to the chat window.
             if (
-              ["generateFollowup", "replyToGeneralInput"].includes(
+              ["generateFollowup", "replyToGeneralInput", "clarifyIntent"].includes(
                 langgraphNode
               )
             ) {
@@ -1203,7 +1203,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
             }
 
             if (
-              ["generateFollowup", "replyToGeneralInput"].includes(
+              ["generateFollowup", "replyToGeneralInput", "clarifyIntent"].includes(
                 langgraphNode
               ) &&
               !followupMessageId &&

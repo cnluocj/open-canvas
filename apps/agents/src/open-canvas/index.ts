@@ -13,6 +13,7 @@ import { rewriteCodeArtifactTheme } from "./nodes/rewriteCodeArtifactTheme.js";
 import { generateTitleNode } from "./nodes/generateTitle.js";
 import { updateHighlightedText } from "./nodes/updateHighlightedText.js";
 import { smartEditArtifact } from "./nodes/smartEditArtifact.js";
+import { clarifyIntent } from "./nodes/clarifyIntent.js";
 import { OpenCanvasGraphAnnotation } from "./state.js";
 import { summarizer } from "./nodes/summarizer.js";
 import { graph as webSearchGraph } from "../web-search/index.js";
@@ -118,6 +119,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("updateArtifact", updateArtifact)
   .addNode("updateHighlightedText", updateHighlightedText)
   .addNode("smartEditArtifact", smartEditArtifact)
+  .addNode("clarifyIntent", clarifyIntent)
   .addNode("generateArtifact", generateArtifact)
   .addNode("customAction", customAction)
   .addNode("generateFollowup", generateFollowup)
@@ -145,6 +147,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
     "updateArtifact",
     "updateHighlightedText",
     "rewriteArtifact",
+    "clarifyIntent",
   ])
   // Edges
   .addEdge("generateArtifact", "generateFollowup")
@@ -177,6 +180,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("webSearch", "routePostWebSearch")
   // End edges
   .addEdge("replyToGeneralInput", "cleanState")
+  .addEdge("clarifyIntent", "cleanState")
   // Only reflect if an artifact was generated/updated.
   // .addEdge("generateFollowup", "reflect")
   // .addEdge("reflect", "cleanState")

@@ -22,6 +22,8 @@ export const DEFAULT_INPUTS = {
   customQuickActionId: undefined,
   webSearchEnabled: undefined,
   webSearchResults: undefined,
+  remainingSmartEdits: undefined,
+  smartEditAnalysisReasoning: undefined,
 };
 
 export const PROGRAMMING_LANGUAGES: Array<{

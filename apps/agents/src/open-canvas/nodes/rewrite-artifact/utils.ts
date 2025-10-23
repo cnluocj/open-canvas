@@ -136,11 +136,13 @@ export async function analyzeEditType({
   recentHumanMessage,
   config,
   contextDocumentMessages = [],
+  conversationHistory = [],
 }: {
   artifactContent: string;
   recentHumanMessage: BaseMessage;
   config: LangGraphRunnableConfig;
   contextDocumentMessages?: BaseMessage[];
+  conversationHistory?: BaseMessage[];
 }): Promise<z.infer<typeof ANALYZE_EDIT_SCHEMA> | null> {
   const model = await getModelFromConfig(config, {
     temperature: 0,
@@ -214,6 +216,7 @@ Requires full regeneration (return empty edits):
     const result = await modelWithTool.invoke([
       ...contextDocumentMessages,
       { role: "user", content: analysisPrompt },
+      ...conversationHistory,
       recentHumanMessage,
     ]);
 
