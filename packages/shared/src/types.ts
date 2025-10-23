@@ -127,6 +127,7 @@ export interface TextHighlight {
   fullMarkdown: string;
   markdownBlock: string;
   selectedText: string;
+  replacementText?: string;
 }
 
 export interface ArtifactDiffInfo {

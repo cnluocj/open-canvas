@@ -138,6 +138,7 @@ export const smartEditArtifact = async (
         fullMarkdown: artifactContent,
         markdownBlock: currentEdit.oldString,
         selectedText: currentEdit.oldString.replace(/[#*`\[\]]/g, "").trim(),
+        replacementText: currentEdit.newString,
       },
       remainingSmartEdits:
         remainingEdits.length > 0 ? remainingEdits : undefined,
