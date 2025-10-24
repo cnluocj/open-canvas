@@ -118,35 +118,7 @@ export const updateHighlightedText = async (
   }
 
   let responseContent: string;
-  if (replacementText) {
-    const simplePromptContent = `请原封不动地输出以下内容 (output exactly the following content without any changes):\n\n${replacementText}`;
-    const isO1MiniModel = isUsingO1MiniModel(config);
-    const response = await model.invoke(
-      isO1MiniModel
-        ? [
-            {
-              role: "user",
-              content: simplePromptContent,
-            },
-          ]
-        : [
-            {
-              role: "system",
-              content:
-                "You are a precise formatter. Repeat the provided text exactly as-is without adding or removing anything.",
-            },
-            {
-              role: "user",
-              content: simplePromptContent,
-            },
-          ]
-    );
-    const modelResponse = response.content as string;
-    if (modelResponse !== replacementText) {
-      console.warn(
-        "[Smart Edit Markdown] Model output differed from provided replacement text. Using provided text directly."
-      );
-    }
+  if (replacementText !== undefined) {
     responseContent = replacementText;
   } else {
     // Get reflections for user preferences and style guidelines only when needed

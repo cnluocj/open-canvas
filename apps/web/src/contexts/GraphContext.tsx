@@ -1234,6 +1234,18 @@ export function GraphProvider({ children }: { children: ReactNode }) {
               rewriteArtifactMeta = nodeOutput;
             }
 
+            if (
+              langgraphNode === "updateHighlightedText" &&
+              nodeOutput &&
+              (nodeOutput as any).artifact
+            ) {
+              const updatedArtifact = (nodeOutput as { artifact?: ArtifactV3 }).artifact;
+              if (updatedArtifact) {
+                setFirstTokenReceived(true);
+                setArtifact(updatedArtifact);
+              }
+            }
+
             if (langgraphNode === "search" && webSearchMessageId) {
               const output = nodeOutput as {
                 webSearchResults: SearchResult[];
