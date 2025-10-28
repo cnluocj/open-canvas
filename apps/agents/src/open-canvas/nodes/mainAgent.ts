@@ -138,7 +138,7 @@ export const mainAgent = async (
     }
 
     case "update": {
-      // 修改现有文档：路由到 smartEditArtifact 节点进行智能编辑分析
+      // 修改现有文档
       if (!state.artifact?.contents?.length) {
         // 如果没有 artifact 却要求修改，返回提示消息
         const errorMessage = new AIMessage(
@@ -151,6 +151,23 @@ export const mainAgent = async (
         };
       }
 
+      // 如果用户已经选中了文字，直接路由到对应的更新节点（快速路径）
+      if (state.highlightedText) {
+        console.log("[mainAgent] User has selected text, routing directly to updateHighlightedText");
+        return {
+          next: "updateHighlightedText",
+        };
+      }
+
+      if (state.highlightedCode) {
+        console.log("[mainAgent] User has selected code, routing directly to updateArtifact");
+        return {
+          next: "updateArtifact",
+        };
+      }
+
+      // 用户没有选中文字，需要智能分析编辑意图
+      console.log("[mainAgent] No selection, routing to smartEditArtifact for analysis");
       return {
         next: "smartEditArtifact",
       };

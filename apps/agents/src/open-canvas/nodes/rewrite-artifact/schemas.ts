@@ -33,17 +33,17 @@ const SINGLE_EDIT_SCHEMA = z.object({
   oldString: z
     .string()
     .describe(
-      "The EXACT literal text from the current artifact that should be replaced. Include at least 3 lines of context BEFORE and AFTER the target text for uniqueness. Must match whitespace and indentation precisely."
+      "文档中需要被替换的确切原始文本。为了确保唯一性，在目标文本前后至少包含 3 行上下文。必须精确匹配空格和缩进。"
     ),
   newString: z
     .string()
     .describe(
-      "The new text that should replace oldString. Must maintain the same structure and indentation style as the surrounding code."
+      "替换 oldString 的新文本。必须保持与周围代码相同的结构和缩进风格。"
     ),
   explanation: z
     .string()
     .describe(
-      "Brief explanation of what this specific edit does (e.g., 'Rename variable X to Y', 'Add type annotation to function', 'Update summary section')."
+      "简要说明这个编辑的作用（例如：'将变量 X 重命名为 Y'、'给函数添加类型注解'、'更新摘要部分'）。"
     ),
 });
 
@@ -57,14 +57,14 @@ export const ANALYZE_EDIT_SCHEMA = z
     edits: z
       .array(SINGLE_EDIT_SCHEMA)
       .describe(
-        "Array of targeted edits to apply. Each edit is applied sequentially. Return empty array if the request requires full regeneration (e.g., vague requests like 'make it better', structural changes affecting >50% of content, or when specific locations cannot be identified)."
+        "要应用的有针对性的编辑数组。每个编辑按顺序应用。如果请求需要全文重写（例如：模糊请求如'改得更好'、影响超过 50% 内容的结构性修改、或无法识别具体位置时），则返回空数组。"
       ),
     reasoning: z
       .string()
       .describe(
-        "Explanation of your analysis: Why you extracted these specific edits, or why full regeneration is needed (if edits array is empty)."
+        "分析说明：为什么提取了这些特定的编辑，或者为什么需要全文重写（如果 edits 数组为空）。"
       ),
   })
   .describe(
-    "Analyze the user's edit request and extract specific, targeted edits. Return empty edits array if full regeneration is needed."
+    "分析用户的编辑请求并提取具体的、有针对性的编辑。如果需要全文重写，返回空的 edits 数组。"
   );

@@ -108,10 +108,16 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("cleanState", cleanState)
   .addNode("generateTitle", generateTitleNode)
   .addNode("summarizer", summarizer)
-  // mainAgent routing: chat → cleanState, generate → generateArtifact, update → smartEditArtifact
+  // mainAgent routing:
+  //   chat → cleanState
+  //   generate → generateArtifact
+  //   update (with selection) → updateHighlightedText/updateArtifact (fast path)
+  //   update (no selection) → smartEditArtifact (analysis needed)
   .addConditionalEdges("mainAgent", routeNode, [
     "generateArtifact",
     "smartEditArtifact",
+    "updateHighlightedText",
+    "updateArtifact",
     "cleanState",
   ])
   // smartEditArtifact routing: analyze and route to appropriate handler

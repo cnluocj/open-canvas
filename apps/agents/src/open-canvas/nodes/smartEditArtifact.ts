@@ -65,6 +65,8 @@ export const smartEditArtifact = async (
       config,
       contextDocumentMessages: contextDocumentMessages as unknown as BaseMessage[],
       conversationHistory,
+      highlightedText: state.highlightedText,
+      highlightedCode: state.highlightedCode,
     });
 
     // If analysis completely failed, fallback to full rewrite
