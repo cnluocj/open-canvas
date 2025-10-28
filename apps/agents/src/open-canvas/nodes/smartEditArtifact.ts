@@ -67,15 +67,35 @@ export const smartEditArtifact = async (
       conversationHistory,
     });
 
-    if (!editAnalysis?.edits || editAnalysis.edits.length === 0) {
-      console.log(
-        "[Smart Edit] No edits detected, routing to clarifyIntent"
-      );
-      console.log(`[Smart Edit] Reasoning: ${editAnalysis?.reasoning || "No reasoning provided"}`);
-
-      // Route to clarifyIntent node to ask user for clarification
+    // If analysis completely failed, fallback to full rewrite
+    if (!editAnalysis) {
+      console.log("[Smart Edit] Analysis failed completely, routing to rewriteArtifact");
       return {
-        smartEditAnalysisReasoning: editAnalysis?.reasoning || "The request was too vague to identify specific edits.",
+        next: "rewriteArtifact",
+      };
+    }
+
+    if (!editAnalysis.edits || editAnalysis.edits.length === 0) {
+      const reasoning = editAnalysis?.reasoning || "No reasoning provided";
+      console.log("[Smart Edit] No edits detected");
+      console.log(`[Smart Edit] Reasoning: ${reasoning}`);
+
+      // Check if the reasoning suggests a full rewrite is needed
+      const needsFullRewrite = reasoning.match(
+        /(全文重写|完整重写|complete rewrite|completely rewrite|结构性|restructure|architectural|structural|affecting.*50%|>50%)/i
+      );
+
+      if (needsFullRewrite) {
+        console.log("[Smart Edit] Reasoning indicates full rewrite needed, routing to rewriteArtifact");
+        return {
+          next: "rewriteArtifact",
+        };
+      }
+
+      // Otherwise, the request is too vague - ask for clarification
+      console.log("[Smart Edit] Request too vague, routing to clarifyIntent");
+      return {
+        smartEditAnalysisReasoning: reasoning,
         next: "clarifyIntent",
       };
     }

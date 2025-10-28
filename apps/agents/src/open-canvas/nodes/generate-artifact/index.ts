@@ -52,7 +52,7 @@ export const generateArtifact = async (
 
   const userSystemPrompt = optionallyGetSystemPromptFromConfig(config);
   const fullSystemPrompt = userSystemPrompt
-    ? `${userSystemPrompt}\n${formattedNewArtifactPrompt}`
+    ? `${userSystemPrompt}\n\n---\n\n${formattedNewArtifactPrompt}`
     : formattedNewArtifactPrompt;
 
   const contextDocumentMessages = await createContextDocumentMessages(config);

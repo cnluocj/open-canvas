@@ -59,7 +59,7 @@ export const rewriteArtifact = async (
 
   const userSystemPrompt = optionallyGetSystemPromptFromConfig(config);
   const fullSystemPrompt = userSystemPrompt
-    ? `${userSystemPrompt}\n${formattedPrompt}`
+    ? `${userSystemPrompt}\n\n---\n\n${formattedPrompt}`
     : formattedPrompt;
 
   const isO1MiniModel = isUsingO1MiniModel(config);

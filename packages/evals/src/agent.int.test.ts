@@ -15,8 +15,8 @@ ls.describe("query routing", () => {
       referenceOutputs: QUERY_ROUTING_DATA.referenceOutputs,
     },
     async ({ inputs, referenceOutputs }) => {
-      const generatePathNode = graph.nodes.generatePath;
-      const res = await generatePathNode.invoke(inputs, {
+      const mainAgentNode = graph.nodes.mainAgent;
+      const res = await mainAgentNode.invoke(inputs, {
         configurable: {
           customModelName: "gpt-4o-mini",
         },

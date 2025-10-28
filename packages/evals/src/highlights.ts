@@ -6,8 +6,10 @@ import "dotenv/config";
 const runGraph = async (
   input: Record<string, any>
 ): Promise<Record<string, any>> => {
-  // Interrupt after updating the artifact
-  graph.interruptAfter = ["updateArtifact"];
+  // Note: updateArtifact node has been removed in the simplified architecture
+  // The graph now uses mainAgent -> rewriteArtifact for updates
+  // Interrupt after rewriting the artifact
+  graph.interruptAfter = ["rewriteArtifact"];
   return await graph.invoke(input);
 };
 
