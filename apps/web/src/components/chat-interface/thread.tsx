@@ -6,7 +6,6 @@ import { Thread as ThreadType } from "@langchain/langgraph-sdk";
 import { ArrowDownIcon, PanelRightOpen, SquarePen } from "lucide-react";
 import { Dispatch, FC, SetStateAction } from "react";
 import { ReflectionsDialog } from "../reflections-dialog/ReflectionsDialog";
-import { useLangSmithLinkToolUI } from "../tool-hooks/LangSmithLinkToolUI";
 import { TooltipIconButton } from "../ui/assistant-ui/tooltip-icon-button";
 import { TighterText } from "../ui/header";
 import { Composer } from "./composer";
@@ -66,9 +65,6 @@ export const Thread: FC<ThreadProps> = (props: ThreadProps) => {
     setThreadId,
   } = useThreadContext();
   const { user } = useUserContext();
-
-  // Render the LangSmith trace link
-  useLangSmithLinkToolUI();
 
   const handleNewSession = async () => {
     if (!user) {

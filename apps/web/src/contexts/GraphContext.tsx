@@ -118,7 +118,6 @@ export function GraphProvider({ children }: { children: ReactNode }) {
   const assistantsData = useAssistantContext();
   const threadData = useThreadContext();
   const { toast } = useToast();
-  const { shareRun } = useRuns();
   const [chatStarted, setChatStarted] = useState(false);
   const [messages, setMessages] = useState<BaseMessage[]>([]);
   const [artifact, setArtifact] = useState<ArtifactV3>();
@@ -1320,42 +1319,6 @@ export function GraphProvider({ children }: { children: ReactNode }) {
       setIsStreaming(false);
     }
 
-    if (runId) {
-      // Chain `.then` to not block the stream
-      shareRun(runId).then(async (sharedRunURL) => {
-        setMessages((prevMessages) => {
-          const newMsgs = prevMessages.map((msg) => {
-            if (
-              msg.id === followupMessageId &&
-              !(msg as AIMessage).tool_calls?.find(
-                (tc) => tc.name === "langsmith_tool_ui"
-              )
-            ) {
-              const toolCall = {
-                name: "langsmith_tool_ui",
-                args: { sharedRunURL },
-                id: sharedRunURL
-                  ?.split("https://smith.langchain.com/public/")[1]
-                  .split("/")[0],
-              };
-              const castMsg = msg as AIMessage;
-              const newMessageWithToolCall = new AIMessage({
-                ...castMsg,
-                content: castMsg.content,
-                id: castMsg.id,
-                tool_calls: castMsg.tool_calls
-                  ? [...castMsg.tool_calls, toolCall]
-                  : [toolCall],
-              });
-              return newMessageWithToolCall;
-            }
-
-            return msg;
-          });
-          return newMsgs;
-        });
-      });
-    }
   };
 
   const setSelectedArtifact = (index: number) => {
