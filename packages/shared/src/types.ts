@@ -198,6 +198,41 @@ export type ContextDocument = {
 };
 
 /**
+ * 病案报告类型
+ */
+export type ReportType = "treatment" | "nursing" | "unknown";
+
+/**
+ * 压缩后的病例材料
+ */
+export interface ExtractedMaterial {
+  /**
+   * 报告类型
+   */
+  type: ReportType;
+  /**
+   * 压缩后的内容
+   */
+  compressedContent: string;
+  /**
+   * 使用的模版类型
+   */
+  template: string;
+  /**
+   * 原始文档名称
+   */
+  originalDocumentName: string;
+  /**
+   * 置信度（分类时的置信度）
+   */
+  confidence?: number;
+  /**
+   * 是否是用户手动选择的类型
+   */
+  isUserConfirmed?: boolean;
+}
+
+/**
  * The metadata included in search results from Exa.
  */
 export type ExaMetadata = {

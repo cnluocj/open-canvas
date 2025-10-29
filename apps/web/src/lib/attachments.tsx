@@ -5,6 +5,7 @@ import { ContextDocument } from "@opencanvas/shared/types";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { toBlobURL } from "@ffmpeg/util";
 import { createClient } from "@supabase/supabase-js";
+import mammoth from "mammoth";
 
 export function arrayToFileList(files: File[] | undefined) {
   if (!files || !files.length) return undefined;
@@ -112,6 +113,23 @@ export function fileToBase64(file: File): Promise<string> {
   });
 }
 
+export async function extractWordText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = async () => {
+      try {
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        resolve(result.value);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 const MAX_AUDIO_SIZE = 26214400;
 
 export async function load(
@@ -207,6 +225,71 @@ export async function convertDocuments({
   const documentsPromise = Array.from(documents).map(async (doc) => {
     const isAudio = ALLOWED_AUDIO_TYPES.has(doc.type);
     const isVideo = ALLOWED_VIDEO_TYPES.has(doc.type);
+    const isWord =
+      doc.type ===
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      doc.type === "application/msword" ||
+      doc.name.endsWith(".docx") ||
+      doc.name.endsWith(".doc");
+
+    if (isWord) {
+      toast({
+        title: "🔄 正在提取 Word 文档",
+        description: (
+          <span className="flex items-center gap-2">
+            正在从 {doc.name} 提取文本，请稍候...{" "}
+            <Icons.LoaderCircle className="animate-spin w-4 h-4" />
+          </span>
+        ),
+        duration: 5000,
+      });
+
+      try {
+        const extractedText = await extractWordText(doc);
+
+        // 控制台输出，方便调试
+        console.log("📄 Word 文档提取成功:", {
+          fileName: doc.name,
+          fileSize: doc.size,
+          extractedLength: extractedText.length,
+          preview: extractedText.substring(0, 200)
+        });
+
+        // 获取字数统计和预览文本
+        const wordCount = extractedText.length;
+        const previewText = extractedText.substring(0, 100);
+        const preview = previewText + (extractedText.length > 100 ? "..." : "");
+
+        toast({
+          title: "✅ Word 文档提取成功",
+          description: (
+            <div className="flex flex-col gap-1 text-sm">
+              <p className="font-semibold">{doc.name}</p>
+              <p className="text-gray-600">总字数: {wordCount} 字</p>
+              <div className="mt-2 p-2 bg-gray-50 rounded text-xs max-h-32 overflow-y-auto">
+                <p className="font-semibold mb-1">内容预览:</p>
+                <p className="whitespace-pre-wrap text-gray-700">{preview}</p>
+              </div>
+            </div>
+          ),
+          duration: 10000,
+        });
+
+        return {
+          name: doc.name,
+          type: "text",
+          data: extractedText,
+        };
+      } catch (error) {
+        toast({
+          title: "Failed to extract Word document",
+          description: `Error extracting text from ${doc.name}. ${error instanceof Error ? error.message : "Unknown error"}`,
+          variant: "destructive",
+          duration: 7500,
+        });
+        return null;
+      }
+    }
 
     if (isAudio) {
       if (doc.size > MAX_AUDIO_SIZE) {

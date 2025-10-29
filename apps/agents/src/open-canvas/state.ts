@@ -8,6 +8,7 @@ import {
   ArtifactV3,
   TextHighlight,
   SearchResult,
+  ExtractedMaterial,
 } from "@opencanvas/shared/types";
 import {
   Annotation,
@@ -147,6 +148,16 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    * Used by clarifyIntent node to generate helpful clarification questions.
    */
   smartEditAnalysisReasoning: Annotation<string | undefined>,
+  /**
+   * 压缩后的病例材料
+   * 当用户上传病例文档时，经过材料处理子图处理后存储在这里
+   */
+  extractedMaterial: Annotation<ExtractedMaterial | undefined>,
+  /**
+   * 是否启用材料处理功能
+   * 用于判断是否需要触发材料处理流程
+   */
+  materialProcessingEnabled: Annotation<boolean | undefined>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<

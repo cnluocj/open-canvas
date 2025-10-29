@@ -33,6 +33,7 @@ import { VideoAttachmentAdapter } from "../ui/assistant-ui/attachment-adapters/v
 import { useUserContext } from "@/contexts/UserContext";
 import { useThreadContext } from "@/contexts/ThreadProvider";
 import { PDFAttachmentAdapter } from "../ui/assistant-ui/attachment-adapters/pdf";
+import { WordAttachmentAdapter } from "../ui/assistant-ui/attachment-adapters/word";
 
 export interface ContentComposerChatInterfaceProps {
   switchSelectedThreadCallback: (thread: ThreadType) => void;
@@ -145,6 +146,7 @@ export function ContentComposerChatInterfaceComponent(
         new AudioAttachmentAdapter(),
         new VideoAttachmentAdapter(),
         new PDFAttachmentAdapter(),
+        new WordAttachmentAdapter(),
       ]),
     },
   });
