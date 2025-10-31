@@ -50,34 +50,54 @@ ${currentContent.code}
     );
   }
 
-  // 3. 从 store 获取文档并注入附件元数据（永远显示，如果存在）
-  const store = config.store;
-  const threadId = config.configurable?.thread_id;
+  // 3. 获取文档并注入附件元数据（双重检查：优先从消息，回退到 store）
+  let documents: ContextDocument[] = [];
 
-  if (store && threadId) {
-    const documentsResult = await store.get(
-      CONTEXT_DOCUMENTS_NAMESPACE,
-      threadId
-    );
-    const documents: ContextDocument[] =
-      (documentsResult?.value as any)?.documents || [];
+  // 3.1 优先从最新消息的 additional_kwargs 获取（第一轮上传时可用）
+  if (state._messages.length > 0) {
+    const recentUserMessage = state._messages[state._messages.length - 1];
+    if (recentUserMessage.getType() === "human") {
+      const messageDocuments = (recentUserMessage.additional_kwargs as any)?.documents as ContextDocument[] | undefined;
+      if (messageDocuments && messageDocuments.length > 0) {
+        documents = messageDocuments;
+        console.log(`[contextBuilder] Found ${documents.length} documents in message additional_kwargs`);
+      }
+    }
+  }
 
-    if (documents.length > 0) {
-      // 生成附件元数据信息
-      const attachmentInfo = documents
-        .map((doc: ContextDocument, idx: number) => {
-          const preview = doc.data.slice(0, 200); // 前 200 字符
-          const wordCount = doc.data.split(/\s+/).length;
-          const sizeKB = Math.round(doc.data.length / 1024);
+  // 3.2 回退到从 store 获取（后续轮次可用）
+  if (documents.length === 0) {
+    const store = config.store;
+    const threadId = config.configurable?.thread_id;
 
-          return `**附件 ${idx + 1}**: ${doc.name}
+    if (store && threadId) {
+      const documentsResult = await store.get(
+        CONTEXT_DOCUMENTS_NAMESPACE,
+        threadId
+      );
+      documents = (documentsResult?.value as any)?.documents || [];
+      if (documents.length > 0) {
+        console.log(`[contextBuilder] Found ${documents.length} documents in store`);
+      }
+    }
+  }
+
+  // 3.3 如果找到文档，注入附件元数据
+  if (documents.length > 0) {
+    const attachmentInfo = documents
+      .map((doc: ContextDocument, idx: number) => {
+        const preview = doc.data.slice(0, 200); // 前 200 字符
+        const wordCount = doc.data.split(/\s+/).length;
+        const sizeKB = Math.round(doc.data.length / 1024);
+
+        return `**附件 ${idx + 1}**: ${doc.name}
 - 文件大小：${sizeKB} KB
 - 字数：约 ${wordCount} 字
 - 内容预览：${preview}...`;
-        })
-        .join("\n\n");
+      })
+      .join("\n\n");
 
-      const attachmentMessage = new SystemMessage(`检测到用户上传了 ${documents.length} 个病例文档：
+    const attachmentMessage = new SystemMessage(`检测到用户上传了 ${documents.length} 个病例文档：
 
 ${attachmentInfo}
 
@@ -86,8 +106,7 @@ ${attachmentInfo}
 2. 已提取材料（process_material 工具）
 3. 调用 generate_report 工具生成`);
 
-      messages.push(attachmentMessage);
-    }
+    messages.push(attachmentMessage);
   }
 
   // 4. 如果用户选中了文字，添加选中信息
