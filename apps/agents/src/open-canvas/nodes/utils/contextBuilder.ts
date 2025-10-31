@@ -61,6 +61,18 @@ ${currentContent.code}
       if (messageDocuments && messageDocuments.length > 0) {
         documents = messageDocuments;
         console.log(`[contextBuilder] Found ${documents.length} documents in message additional_kwargs`);
+
+        // 将附件写入 Store，保证后续轮次仍能访问
+        const store = config.store;
+        const threadId = config.configurable?.thread_id;
+        if (store && threadId) {
+          await store.put(CONTEXT_DOCUMENTS_NAMESPACE, threadId, {
+            documents,
+          });
+          console.log(
+            `[contextBuilder] Stored ${documents.length} documents to store for thread ${threadId}`
+          );
+        }
       }
     }
   }
