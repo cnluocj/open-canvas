@@ -11,6 +11,7 @@ import { clarifyIntent } from "./nodes/clarifyIntent.js";
 import { generateTitleNode } from "./nodes/generateTitle.js";
 import { OpenCanvasGraphAnnotation } from "./state.js";
 import { summarizer } from "./nodes/summarizer.js";
+import { processMaterial } from "./nodes/processMaterial.js";
 
 const routeNode = (state: typeof OpenCanvasGraphAnnotation.State) => {
   if (!state.next) {
@@ -108,17 +109,21 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addNode("cleanState", cleanState)
   .addNode("generateTitle", generateTitleNode)
   .addNode("summarizer", summarizer)
+  // Material processing node (for medical case documents)
+  .addNode("processMaterial", processMaterial)
   // mainAgent routing:
   //   chat → cleanState
   //   generate → generateArtifact
   //   update (with selection) → updateHighlightedText/updateArtifact (fast path)
   //   update (no selection) → smartEditArtifact (analysis needed)
+  //   material processing → processMaterial (via process_material tool)
   .addConditionalEdges("mainAgent", routeNode, [
     "generateArtifact",
     "smartEditArtifact",
     "updateHighlightedText",
     "updateArtifact",
     "cleanState",
+    "processMaterial",
   ])
   // smartEditArtifact routing: analyze and route to appropriate handler
   .addConditionalEdges("smartEditArtifact", routeSmartEdit, [
@@ -142,6 +147,8 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   .addEdge("generateArtifact", "generateFollowup")
   .addEdge("rewriteArtifact", "generateFollowup")
   .addEdge("generateFollowup", "cleanState")
+  // Material processing flow: processMaterial routes back to mainAgent
+  .addConditionalEdges("processMaterial", routeNode, ["mainAgent"])
   // After clean state, conditionally generate title or summarize
   .addConditionalEdges("cleanState", conditionallyGenerateTitle, [
     END,

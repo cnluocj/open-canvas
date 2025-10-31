@@ -34,6 +34,7 @@ import { useUserContext } from "@/contexts/UserContext";
 import { useThreadContext } from "@/contexts/ThreadProvider";
 import { PDFAttachmentAdapter } from "../ui/assistant-ui/attachment-adapters/pdf";
 import { WordAttachmentAdapter } from "../ui/assistant-ui/attachment-adapters/word";
+import { useStore } from "@/hooks/useStore";
 
 export interface ContentComposerChatInterfaceProps {
   switchSelectedThreadCallback: (thread: ThreadType) => void;
@@ -60,7 +61,8 @@ export function ContentComposerChatInterfaceComponent(
     setIsStreaming,
     searchEnabled,
   } = graphData;
-  const { getUserThreads } = useThreadContext();
+  const { getUserThreads, threadId } = useThreadContext();
+  const { putThreadDocuments } = useStore();
   const [isRunning, setIsRunning] = useState(false);
   const messageRef = useRef<HTMLDivElement>(null);
   const ffmpegRef = useRef(new FFmpeg());
@@ -105,6 +107,17 @@ export function ContentComposerChatInterfaceComponent(
           toast,
         });
         contentDocuments.push(...documentsResult);
+
+        // Store documents at thread level for medical case processing
+        if (threadId && contentDocuments.length > 0) {
+          await putThreadDocuments({
+            threadId,
+            documents: contentDocuments,
+          });
+          console.log(
+            `[ContentComposer] Stored ${contentDocuments.length} documents for thread ${threadId}`
+          );
+        }
       }
     }
 

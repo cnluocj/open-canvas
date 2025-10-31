@@ -543,12 +543,12 @@ async function getContextDocuments(
   config: LangGraphRunnableConfig
 ): Promise<ContextDocument[]> {
   const store = config.store;
-  const assistantId = config.configurable?.assistant_id;
-  if (!store || !assistantId) {
+  const threadId = config.configurable?.thread_id;
+  if (!store || !threadId) {
     return [];
   }
 
-  const result = await store.get(CONTEXT_DOCUMENTS_NAMESPACE, assistantId);
+  const result = await store.get(CONTEXT_DOCUMENTS_NAMESPACE, threadId);
   return result?.value?.documents || [];
 }
 

@@ -288,6 +288,70 @@ export function useStore() {
     return item?.value?.documents;
   };
 
+  // Thread-level document storage (for medical case documents)
+  const putThreadDocuments = async ({
+    threadId,
+    documents,
+  }: {
+    threadId: string;
+    documents: ContextDocument[];
+  }): Promise<void> => {
+    try {
+      const res = await fetch("/api/store/put", {
+        method: "POST",
+        body: JSON.stringify({
+          namespace: CONTEXT_DOCUMENTS_NAMESPACE,
+          key: threadId,
+          value: {
+            documents,
+          },
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(
+          "Failed to put thread documents" + res.statusText + res.status
+        );
+      }
+    } catch (e) {
+      console.error("Failed to put thread documents.\n", e);
+    }
+  };
+
+  const getThreadDocuments = async (
+    threadId: string
+  ): Promise<ContextDocument[] | undefined> => {
+    const res = await fetch("/api/store/get", {
+      method: "POST",
+      body: JSON.stringify({
+        namespace: CONTEXT_DOCUMENTS_NAMESPACE,
+        key: threadId,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      console.error(
+        "Failed to get thread documents",
+        res.statusText,
+        res.status
+      );
+      return undefined;
+    }
+
+    const { item }: { item: Item | null } = await res.json();
+    if (!item?.value?.documents) {
+      return undefined;
+    }
+
+    return item?.value?.documents;
+  };
+
   return {
     isLoadingReflections,
     reflections,
@@ -300,5 +364,7 @@ export function useStore() {
     createCustomQuickAction,
     putContextDocuments,
     getContextDocuments,
+    putThreadDocuments,
+    getThreadDocuments,
   };
 }

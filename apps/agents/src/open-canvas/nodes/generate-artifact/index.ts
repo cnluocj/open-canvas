@@ -57,10 +57,26 @@ export const generateArtifact = async (
 
   const contextDocumentMessages = await createContextDocumentMessages(config);
   const isO1MiniModel = isUsingO1MiniModel(config);
+
+  // Add extracted material from medical case documents if available
+  const extractedMaterialMessages = [];
+  if (state.extractedMaterial) {
+    const materialContent = `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+
+${state.extractedMaterial.compressedContent}
+
+请基于以上提取的病例材料撰写报告。`;
+
+    extractedMaterialMessages.push({
+      role: isO1MiniModel ? "user" : "system",
+      content: materialContent,
+    });
+  }
   const response = await modelWithArtifactTool.invoke(
     [
       { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },
       ...contextDocumentMessages,
+      ...extractedMaterialMessages,
       ...state._messages,
     ],
     { runName: "generate_artifact" }

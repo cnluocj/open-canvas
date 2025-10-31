@@ -9,6 +9,7 @@ import {
   TextHighlight,
   SearchResult,
   ExtractedMaterial,
+  ReportType,
 } from "@opencanvas/shared/types";
 import {
   Annotation,
@@ -158,6 +159,11 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    * 用于判断是否需要触发材料处理流程
    */
   materialProcessingEnabled: Annotation<boolean | undefined>,
+  /**
+   * 报告类型（治疗类/护理类）
+   * 由用户明确选择，用于指导材料压缩和报告生成
+   */
+  reportType: Annotation<ReportType | undefined>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<
