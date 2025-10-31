@@ -143,6 +143,19 @@ export const updateHighlightedText = async (
     responseContent = response.content as string;
   }
 
+  // Preserve leading and trailing newlines from the original markdown block
+  // This prevents losing blank lines between blocks when updating
+  const leadingNewlines = markdownBlock.match(/^\n*/)?.[0] || '';
+  const trailingNewlines = markdownBlock.match(/\n*$/)?.[0] || '';
+
+  // Ensure the LLM response has the same boundary newlines as the original
+  let processedResponse = responseContent.trim(); // Remove LLM's whitespace first
+  processedResponse = leadingNewlines + processedResponse + trailingNewlines;
+
+  console.log(
+    `[updateHighlightedText] Preserving boundaries - leading: ${leadingNewlines.length} trailing: ${trailingNewlines.length} newlines`
+  );
+
   const newCurrIndex = state.artifact.contents.length + 1;
   const prevContent = state.artifact.contents.find(
     (c) => c.index === state.artifact.currentIndex && c.type === "text"
@@ -156,7 +169,7 @@ export const updateHighlightedText = async (
   const editResult = performSmartEdit({
     content: fullMarkdown,
     oldString: markdownBlock,
-    newString: responseContent,
+    newString: processedResponse, // Use processed response with preserved newlines
     expectedReplacements: 1,
   });
 

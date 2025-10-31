@@ -80,10 +80,7 @@ export const Composer: FC<ComposerProps> = (props: ComposerProps) => {
         </div>
 
         <div className="flex flex-row w-full items-center justify-start my-auto">
-          <ComposerActionsPopOut
-            userId={props.userId}
-            chatStarted={props.chatStarted}
-          />
+          <ComposerActionsPopOut />
           <ComposerPrimitive.Input
             autoFocus
             placeholder={placeholder}

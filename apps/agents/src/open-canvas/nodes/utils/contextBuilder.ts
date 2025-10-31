@@ -6,19 +6,17 @@ import { getArtifactContent } from "@opencanvas/shared/utils/artifacts";
  * 构建发送给 mainAgent 的上下文消息
  *
  * @param state - 图状态
- * @param assistantPrompt - 从前端选择的助手的 system prompt
+ * @param systemPrompt - 系统 prompt（现在是硬编码的医疗报告助手 prompt）
  * @returns 完整的上下文消息数组
  */
 export function buildContextMessages(
   state: typeof OpenCanvasGraphAnnotation.State,
-  assistantPrompt?: string
+  systemPrompt: string
 ): BaseMessage[] {
   const messages: BaseMessage[] = [];
 
-  // 1. 添加助手的 system prompt（如果有）
-  if (assistantPrompt) {
-    messages.push(new SystemMessage(assistantPrompt));
-  }
+  // 1. 添加系统 prompt
+  messages.push(new SystemMessage(systemPrompt));
 
   // 2. 如果有 artifact，发送完整内容
   if (state.artifact?.contents?.length) {
