@@ -9,8 +9,8 @@ import {
 } from "@opencanvas/shared/utils/artifacts";
 import { performSmartEdit } from "@opencanvas/shared/utils/editing";
 import { analyzeEditType } from "./rewrite-artifact/utils.js";
-import { createContextDocumentMessages } from "../../utils.js";
-import { BaseMessage } from "@langchain/core/messages";
+import { isUsingO1MiniModel } from "../../utils.js";
+import { BaseMessage, SystemMessage, HumanMessage } from "@langchain/core/messages";
 
 /**
  * Smart Edit node: Analyzes user requests and applies targeted edits to specific
@@ -47,7 +47,19 @@ export const smartEditArtifact = async (
     }
 
     console.log("[Smart Edit] Analyzing edit request...");
-    const contextDocumentMessages = await createContextDocumentMessages(config);
+
+    // 只使用压缩后的材料，不使用原始文档
+    const extractedMaterialMessages: BaseMessage[] = [];
+    if (state.extractedMaterial) {
+      const isO1MiniModel = isUsingO1MiniModel(config);
+      extractedMaterialMessages.push(
+        new (isO1MiniModel ? HumanMessage : SystemMessage)(
+          `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+
+${state.extractedMaterial.compressedContent}`
+        )
+      );
+    }
 
     // Get recent conversation history (last 5 messages before the current one)
     // This provides context for clarification dialogs
@@ -63,7 +75,7 @@ export const smartEditArtifact = async (
       artifactContent,
       recentHumanMessage,
       config,
-      contextDocumentMessages: contextDocumentMessages as unknown as BaseMessage[],
+      contextDocumentMessages: extractedMaterialMessages,
       conversationHistory,
       highlightedText: state.highlightedText,
       highlightedCode: state.highlightedCode,

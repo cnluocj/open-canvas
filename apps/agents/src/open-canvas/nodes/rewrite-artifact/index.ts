@@ -11,7 +11,6 @@ import {
   validateState,
 } from "./utils.js";
 import {
-  createContextDocumentMessages,
   getFormattedReflections,
   getModelConfig,
   getModelFromConfig,
@@ -47,8 +46,6 @@ export const rewriteArtifact = async (
     ? currentArtifactContent.fullMarkdown
     : currentArtifactContent.code;
 
-  const contextDocumentMessages = await createContextDocumentMessages(config);
-
   // Generate the full rewritten artifact
   const formattedPrompt = buildPrompt({
     artifactContent,
@@ -63,9 +60,21 @@ export const rewriteArtifact = async (
     : formattedPrompt;
 
   const isO1MiniModel = isUsingO1MiniModel(config);
+
+  // 只使用压缩后的材料，不使用原始文档
+  const extractedMaterialMessages = [];
+  if (state.extractedMaterial) {
+    extractedMaterialMessages.push({
+      role: isO1MiniModel ? "user" : "system",
+      content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+
+${state.extractedMaterial.compressedContent}`,
+    });
+  }
+
   const newArtifactResponse = await smallModelWithConfig.invoke([
     { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },
-    ...contextDocumentMessages,
+    ...extractedMaterialMessages,
     recentHumanMessage,
   ]);
 

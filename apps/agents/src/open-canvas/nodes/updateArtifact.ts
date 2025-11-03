@@ -10,7 +10,6 @@ import {
 } from "@opencanvas/shared/types";
 import { performSmartEdit } from "@opencanvas/shared/utils/editing";
 import {
-  createContextDocumentMessages,
   ensureStoreInConfig,
   formatReflections,
   getModelConfig,
@@ -115,11 +114,22 @@ export const updateArtifact = async (
     throw new Error("No recent human message found");
   }
 
-  const contextDocumentMessages = await createContextDocumentMessages(config);
   const isO1MiniModel = isUsingO1MiniModel(config);
+
+  // 只使用压缩后的材料，不使用原始文档
+  const extractedMaterialMessages = [];
+  if (state.extractedMaterial) {
+    extractedMaterialMessages.push({
+      role: isO1MiniModel ? "user" : "system",
+      content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+
+${state.extractedMaterial.compressedContent}`,
+    });
+  }
+
   const updatedArtifact = await smallModel.invoke([
     { role: isO1MiniModel ? "user" : "system", content: formattedPrompt },
-    ...contextDocumentMessages,
+    ...extractedMaterialMessages,
     recentHumanMessage,
   ]);
 
