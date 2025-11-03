@@ -1225,19 +1225,58 @@ export function GraphProvider({ children }: { children: ReactNode }) {
           }
 
           if (event === "on_chain_end") {
+            const output = extractStreamDataOutput(nodeOutput) ?? nodeOutput;
+
+            if (
+              langgraphNode === "mainAgent" &&
+              output &&
+              Array.isArray((output as any).messages) &&
+              (output as any).messages.length > 0
+            ) {
+              const outputMessages = (output as any).messages as Array<Record<string, any>>;
+              setMessages((prev) => {
+                const existingIds = new Set(prev.map((m) => m.id));
+                const messagesToAdd = outputMessages
+                  .map((msg) => {
+                    if (!msg) return undefined;
+                    if (msg.id && existingIds.has(msg.id)) {
+                      return undefined;
+                    }
+                    if ("_getType" in msg || msg instanceof AIMessage) {
+                      return msg as unknown as BaseMessage;
+                    }
+                    try {
+                      return new AIMessage({
+                        id: msg.id,
+                        content: msg.content,
+                        additional_kwargs: msg.additional_kwargs,
+                        response_metadata: msg.response_metadata,
+                      });
+                    } catch (err) {
+                      console.error("Failed to convert mainAgent message", msg, err);
+                      return undefined;
+                    }
+                  })
+                  .filter((msg): msg is BaseMessage => msg !== undefined);
+
+                if (!messagesToAdd.length) return prev;
+                return [...prev, ...messagesToAdd];
+              });
+            }
+
             if (
               langgraphNode === "rewriteArtifact" &&
               taskName === "optionally_update_artifact_meta"
             ) {
-              rewriteArtifactMeta = nodeOutput;
+              rewriteArtifactMeta = output;
             }
 
             if (
               langgraphNode === "updateHighlightedText" &&
-              nodeOutput &&
-              (nodeOutput as any).artifact
+              output &&
+              (output as any).artifact
             ) {
-              const updatedArtifact = (nodeOutput as { artifact?: ArtifactV3 }).artifact;
+              const updatedArtifact = (output as { artifact?: ArtifactV3 }).artifact;
               if (updatedArtifact) {
                 setFirstTokenReceived(true);
                 setArtifact(updatedArtifact);
@@ -1245,7 +1284,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
             }
 
             if (langgraphNode === "search" && webSearchMessageId) {
-              const output = nodeOutput as {
+              const searchOutput = output as {
                 webSearchResults: SearchResult[];
               };
 
@@ -1257,7 +1296,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
                     ...m,
                     additional_kwargs: {
                       ...m.additional_kwargs,
-                      webSearchResults: output.webSearchResults,
+                      webSearchResults: searchOutput.webSearchResults,
                       webSearchStatus: "done",
                     },
                   });
@@ -1272,7 +1311,7 @@ export function GraphProvider({ children }: { children: ReactNode }) {
                 (m) => m === threadData.modelName
               )
             ) {
-              const message = nodeOutput;
+              const message = output;
               generateArtifactToolCallStr +=
                 message?.tool_call_chunks?.[0]?.args || message?.content || "";
               const result = handleGenerateArtifactToolCallChunk(

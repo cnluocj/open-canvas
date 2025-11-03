@@ -1,5 +1,4 @@
 import { LangGraphRunnableConfig } from "@langchain/langgraph";
-import { z } from "zod";
 import { AIMessage, SystemMessage, HumanMessage } from "@langchain/core/messages";
 import {
   MaterialProcessingReturnType,
@@ -12,18 +11,6 @@ import {
 import { getModelFromConfig } from "../../utils";
 import { getReportTemplate } from "@opencanvas/shared/templates/index";
 import type { ExtractedMaterial } from "@opencanvas/shared/types";
-
-/**
- * 压缩工具的 schema
- */
-const compressMaterialSchema = z.object({
-  compressedContent: z
-    .string()
-    .describe("按照模版结构组织的压缩后的病例材料，使用 Markdown 格式"),
-  extractedSections: z
-    .record(z.string())
-    .describe("按章节提取的关键信息，key为章节名称，value为该章节的提取内容"),
-});
 
 /**
  * 压缩材料节点
@@ -71,48 +58,34 @@ export const compressMaterial = async (
     // 获取模型
     const model = await getModelFromConfig(config);
 
-    // 绑定工具
-    const modelWithTools = model.bindTools([
-      {
-        name: "compress_material",
-        description:
-          "压缩病例材料，提取关键信息并按照模版结构组织",
-        schema: compressMaterialSchema,
-      },
-    ]);
+    // 直接调用模型，不使用工具绑定
+    const response = await model.invoke([systemMessage, userMessage]);
 
-    // 调用模型
-    const response = await modelWithTools.invoke([
-      systemMessage,
-      userMessage,
-    ]);
+    // 获取压缩后的内容
+    const compressedContent = response.content as string;
 
-    // 解析工具调用
-    if (
-      response instanceof AIMessage &&
-      response.tool_calls &&
-      response.tool_calls.length > 0
-    ) {
-      const toolCall = response.tool_calls[0];
-      const { compressedContent } = toolCall.args as z.infer<
-        typeof compressMaterialSchema
-      >;
-
-      // 构建 ExtractedMaterial 对象
-      const extractedMaterial: ExtractedMaterial = {
-        type: reportType,
-        compressedContent,
-        template: reportType === "treatment" ? "治疗类" : "护理类",
-        originalDocumentName: document.name,
-        confidence: state.confidence,
-        isUserConfirmed: state.needUserConfirmation
-          ? false
-          : state.confidence >= 0.7,
+    // 验证返回内容
+    if (!compressedContent || compressedContent.trim().length === 0) {
+      return {
+        error: "模型未返回有效的压缩结果",
       };
+    }
 
-      // 生成成功消息
-      const successMessage = new AIMessage({
-        content: `✅ 已成功处理病例材料！
+    // 构建 ExtractedMaterial 对象
+    const extractedMaterial: ExtractedMaterial = {
+      type: reportType,
+      compressedContent,
+      template: reportType === "treatment" ? "治疗类" : "护理类",
+      originalDocumentName: document.name,
+      confidence: state.confidence,
+      isUserConfirmed: state.needUserConfirmation
+        ? false
+        : state.confidence >= 0.7,
+    };
+
+    // 生成成功消息
+    const successMessage = new AIMessage({
+      content: `✅ 已成功处理病例材料！
 
 **文档名称**: ${document.name}
 **报告类型**: ${reportType === "treatment" ? "治疗类" : "护理类"}
@@ -121,17 +94,11 @@ export const compressMaterial = async (
 **压缩率**: ${Math.round((1 - compressedContent.length / materialContent.length) * 100)}%
 
 材料已经提取并压缩完毕，现在您可以开始撰写病案报告了。`,
-      });
+    });
 
-      return {
-        extractedMaterial,
-        messages: [successMessage],
-      };
-    }
-
-    // 如果没有工具调用，返回错误
     return {
-      error: "模型未返回有效的压缩结果",
+      extractedMaterial,
+      messages: [successMessage],
     };
   } catch (error) {
     console.error("Error in compressMaterial:", error);

@@ -28,7 +28,10 @@ function getMedicalReportSystemPrompt(reportType?: string): string {
 **工作原则**：
 - 保持专业、严谨的态度
 - 确保报告内容准确、完整
-- 使用规范的医疗术语`;
+- 使用规范的医疗术语
+
+**工具提示**：
+- 使用 set_report_type 工具可以设置或询问报告类型；如果需要询问用户，请调用该工具但不要传入参数，我会代你提问`;
 
   if (reportType === "treatment") {
     return `${basePrompt}
@@ -55,12 +58,12 @@ function getMedicalReportSystemPrompt(reportType?: string): string {
 const tools = [
   {
     name: "set_report_type",
-    description: `设置病案报告类型。
+    description: `设置病案报告类型，或询问用户选择类型。
 
 **使用时机**：
-1. 用户明确提到报告类型（如"治疗类报告"、"护理类"）→ 直接调用设置
-2. 需要生成报告但用户未提及类型 → 询问用户（不要调用直接询问）
-3. 用户上传了病例文档但未说明用途 → 询问用户（不要调用直接询问）
+1. 用户明确提到报告类型（如"治疗类报告"、"护理类"）→ 直接设置
+2. 需要生成报告但用户未提及类型 → 询问用户
+3. 用户上传了病例文档但未说明用途 → 询问用户
 
 **报告类型**：
 - treatment（治疗类）：关注诊断、治疗方案和效果，医生视角
