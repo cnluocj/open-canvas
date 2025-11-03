@@ -69,6 +69,11 @@ const tools = [
 - treatment（治疗类）：关注诊断、治疗方案和效果，医生视角
 - nursing（护理类）：关注护理评估、措施和效果，护士视角
 
+**设置后的后续操作**：
+- 设置类型后，检查上下文中是否有"检测到用户上传了X个病例文档"
+- 如果有文档且尚未提取材料（上下文中没有"已提取的病例材料"），应立即调用 process_material 工具
+- 这样可以一次性完成"设置类型→提取材料"的流程，用户体验更流畅
+
 **重要**：相同病例可以写不同类型报告，取决于撰写视角。`,
     schema: z.object({
       reportType: z
@@ -210,7 +215,7 @@ export const mainAgent = async (
             reportType,
             messages: [confirmMessage],
             _messages: [confirmMessage],
-            next: undefined, // 继续对话，AI可以在下一轮继续调用其他工具
+            next: "mainAgent", // 循环回 mainAgent，检查是否需要继续处理（如提取材料）
           };
         } else {
           // 用户未说明类型，询问用户

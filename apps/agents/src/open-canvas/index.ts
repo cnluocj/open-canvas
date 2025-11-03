@@ -117,6 +117,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
   //   update (with selection) → updateHighlightedText/updateArtifact (fast path)
   //   update (no selection) → smartEditArtifact (analysis needed)
   //   material processing → processMaterial (via process_material tool)
+  //   loop back → mainAgent (after set_report_type, to check for next steps)
   .addConditionalEdges("mainAgent", routeNode, [
     "generateArtifact",
     "smartEditArtifact",
@@ -124,6 +125,7 @@ const builder = new StateGraph(OpenCanvasGraphAnnotation)
     "updateArtifact",
     "cleanState",
     "processMaterial",
+    "mainAgent",
   ])
   // smartEditArtifact routing: analyze and route to appropriate handler
   .addConditionalEdges("smartEditArtifact", routeSmartEdit, [
