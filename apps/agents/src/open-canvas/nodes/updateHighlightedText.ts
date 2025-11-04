@@ -108,8 +108,13 @@ export const updateHighlightedText = async (
     );
   }
 
-  const { markdownBlock, selectedText, fullMarkdown, replacementText } =
+  const { markdownBlock, selectedText, replacementText } =
     state.highlightedText;
+
+  // Use the backend artifact content as the source of truth for fullMarkdown
+  // instead of the frontend-extracted version, which may have inconsistent
+  // list formatting from BlockNote's blocksToMarkdownLossy()
+  const fullMarkdown = currentArtifactContent.fullMarkdown;
 
   const recentUserMessage = state._messages.findLast(
     (message) => message.getType() === "human"
@@ -175,31 +180,86 @@ ${state.extractedMaterial.compressedContent}`,
     throw new Error("Previous content not found");
   }
 
-  // Use smart editing to replace the markdown block
-  // This handles whitespace variations and special characters intelligently
-  const editResult = performSmartEdit({
-    content: fullMarkdown,
-    oldString: markdownBlock,
-    newString: processedResponse, // Use processed response with preserved newlines
-    expectedReplacements: 1,
-  });
+  // BlockNote renumbers selected list items starting from 1, even if they're item 4, 5, etc.
+  // We need to match content while ignoring the list number difference
+  const stripListNumber = (text: string) => text.replace(/^(\s*)\d+\.\s+/, '$1');
+
+  // First try exact match
+  let blockIndex = fullMarkdown.indexOf(markdownBlock);
+  let matchedBlock = markdownBlock;
+
+  // If exact match fails, try matching content while ignoring list numbers
+  if (blockIndex === -1) {
+    const contentOnly = stripListNumber(markdownBlock).trim();
+
+    if (contentOnly) {
+      // Escape special regex characters in the content
+      const escapedContent = contentOnly.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Match: optional whitespace + any number + dot + spaces + our content
+      const listItemPattern = new RegExp(
+        `^(\\s*)(\\d+\\.\\s+)(${escapedContent})`,
+        'm'
+      );
+
+      const match = fullMarkdown.match(listItemPattern);
+      if (match && match.index !== undefined) {
+        blockIndex = match.index;
+        matchedBlock = match[0];
+        console.log(
+          `[updateHighlightedText] Found content at index ${blockIndex} (list number differs: BlockNote="${markdownBlock.match(/^\d+/)}" vs Document="${match[2].match(/^\d+/)}")`
+        );
+      }
+    }
+  }
 
   let newFullMarkdown: string;
-  if (editResult.success && editResult.newContent) {
-    // Smart edit succeeded
-    newFullMarkdown = editResult.newContent;
+  if (blockIndex !== -1) {
+    // Match succeeded - replace while preserving the document's original list number
+    const docListPrefix = matchedBlock.match(/^(\s*\d+\.\s+)/)?.[1] || '';
+    const updatedContentOnly = stripListNumber(processedResponse);
+    const updatedBlock = docListPrefix + updatedContentOnly;
 
-    // Log which matching strategy was used for telemetry
-    console.log(`[Smart Edit Markdown] Used ${editResult.matchLevel} matching strategy`);
-  } else {
-    // Fallback to simple replacement if smart edit fails
-    console.warn(
-      `[Smart Edit Markdown] Failed with error: ${editResult.error?.message}. Falling back to simple replacement.`
+    newFullMarkdown =
+      fullMarkdown.slice(0, blockIndex) +
+      updatedBlock +
+      fullMarkdown.slice(blockIndex + matchedBlock.length);
+
+    console.log(
+      `[updateHighlightedText] Content match succeeded, preserved document list number`
     );
-    if (!fullMarkdown.includes(markdownBlock)) {
-      throw new Error("Selected text not found in current content");
+  } else {
+    // Content match failed - try smart edit as fallback
+    console.warn(
+      `[updateHighlightedText] Content match failed, trying smart edit fallback`
+    );
+    console.warn(`  markdownBlock length: ${markdownBlock.length} chars`);
+    console.warn(`  fullMarkdown length: ${fullMarkdown.length} chars`);
+
+    const editResult = performSmartEdit({
+      content: fullMarkdown,
+      oldString: markdownBlock,
+      newString: processedResponse,
+      expectedReplacements: 1,
+    });
+
+    if (editResult.success && editResult.newContent) {
+      newFullMarkdown = editResult.newContent;
+      console.log(
+        `[updateHighlightedText] Smart edit succeeded with ${editResult.matchLevel} matching`
+      );
+    } else {
+      // Both methods failed - log detailed diagnostics and throw error
+      console.error(`[updateHighlightedText] All matching strategies failed`);
+      console.error(`  Smart edit error: ${editResult.error?.message}`);
+      console.error(`  markdownBlock (first 300): ${JSON.stringify(markdownBlock.substring(0, 300))}`);
+      console.error(`  fullMarkdown (first 300): ${JSON.stringify(fullMarkdown.substring(0, 300))}`);
+
+      throw new Error(
+        `Could not locate selected text in document. ` +
+        `This may indicate editor state desynchronization. ` +
+        `Smart edit error: ${editResult.error?.message}`
+      );
     }
-    newFullMarkdown = fullMarkdown.replace(markdownBlock, responseContent);
   }
 
   const updatedArtifactContent: ArtifactMarkdownV3 = {
