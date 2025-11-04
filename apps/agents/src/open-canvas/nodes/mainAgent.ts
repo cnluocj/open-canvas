@@ -255,7 +255,20 @@ export const mainAgent = async (
 
         // 路由到 processMaterial 节点（复用现有节点）
         console.log(`[mainAgent] Routing to processMaterial with reportType: ${state.reportType}`);
-        return { next: "processMaterial" };
+
+        // 输出指令消息，前端会显示"正在沟通需求"（材料提取过程）
+        const processInstructionMessage = new AIMessage(
+          JSON.stringify({
+            action: "chat",
+            reasoning: "助手正在提取和压缩病例材料"
+          })
+        );
+
+        return {
+          messages: [processInstructionMessage],
+          _messages: [processInstructionMessage],
+          next: "processMaterial"
+        };
       }
 
       case "generate_report": {
@@ -274,7 +287,20 @@ export const mainAgent = async (
 
         // 生成报告：路由到 generateArtifact 节点
         console.log("[mainAgent] Routing to generateArtifact");
-        return { next: "generateArtifact" };
+
+        // 输出指令消息，前端会显示"正在生成报告"
+        const instructionMessage = new AIMessage(
+          JSON.stringify({
+            action: "generate",
+            reasoning: "助手正在根据已收集的信息生成病案报告"
+          })
+        );
+
+        return {
+          messages: [instructionMessage],
+          _messages: [instructionMessage],
+          next: "generateArtifact"
+        };
       }
 
       case "update_report":
@@ -295,7 +321,20 @@ export const mainAgent = async (
         console.log(
           "[mainAgent] Routing to smartEditArtifact for update analysis"
         );
-        return { next: "smartEditArtifact" };
+
+        // 输出指令消息，前端会显示"正在更新报告"
+        const updateInstructionMessage = new AIMessage(
+          JSON.stringify({
+            action: "update",
+            reasoning: (toolCall.args as any).updateIntent || "助手正在更新报告内容"
+          })
+        );
+
+        return {
+          messages: [updateInstructionMessage],
+          _messages: [updateInstructionMessage],
+          next: "smartEditArtifact"
+        };
 
       default:
         console.error(`[mainAgent] Unknown tool: ${toolCall.name}`);
@@ -311,7 +350,10 @@ export const mainAgent = async (
   } else {
     // 没有工具调用 = 普通对话
     // response.content 包含模型的回复，直接返回
+    // 注意：不添加指令消息，因为 response 会通过 streaming 增量显示，
+    // 如果添加指令消息，它会在 on_chain_end 时才添加，导致出现在响应文本之后
     console.log("[mainAgent] Chat response (no tool call)");
+
     return {
       messages: [response],
       _messages: [response],

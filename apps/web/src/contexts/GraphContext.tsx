@@ -507,6 +507,14 @@ export function GraphProvider({ children }: { children: ReactNode }) {
               )
             ) {
               const message = extractStreamDataChunk(nodeChunk);
+
+              // 过滤空消息：如果内容为空，跳过不创建消息
+              // 这防止了在路由到其他节点时创建空白消息（只显示头像的情况）
+              if (!message.content || (typeof message.content === 'string' && message.content.trim() === "")) {
+                console.log("[GraphContext] Skipping empty stream chunk from", langgraphNode);
+                continue;
+              }
+
               if (!followupMessageId) {
                 followupMessageId = message.id;
               }
