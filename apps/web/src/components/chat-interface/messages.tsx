@@ -295,28 +295,23 @@ const InstructionMessageComponent = ({
 
       <div className="col-span-2 col-start-2 row-start-1 my-1.5 max-w-xl break-words leading-7">
         <div className="rounded-2xl border border-dashed border-muted-foreground/40 bg-muted/40 px-5 py-4 shadow-sm">
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             {isInProgress ? (
               // 进行中：白色到灰色呼吸圆点
-              <div className="h-3 w-3 flex-shrink-0 rounded-full animate-breathe mt-2" />
+              <div className="h-3 w-3 flex-shrink-0 rounded-full animate-breathe" />
             ) : isCompleted ? (
               // 已完成：绿色静态圆点
-              <div className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500 mt-2" />
+              <div className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500" />
             ) : (
               // 回退（不应该出现）
-              <ActionIcon className="h-4 w-4 flex-shrink-0 mt-1.5" />
+              <ActionIcon className="h-4 w-4 flex-shrink-0" />
             )}
-            <div className="flex flex-col gap-2 text-sm leading-6 text-muted-foreground">
-              <div className="text-base font-medium text-foreground">
-                {isPending
-                  ? "助手正在解析指令…"
-                  : actionMeta?.label ?? "助手正在处理指令"}
-              </div>
-              <div>
-                {instruction.type === "parsed"
+            <div className="text-sm leading-6 text-muted-foreground">
+              {isPending
+                ? "助手正在解析指令…"
+                : instruction.type === "parsed"
                   ? instruction.reasoning || actionMeta?.description
                   : "请稍候，助手正在根据指令准备回复。"}
-              </div>
             </div>
           </div>
         </div>
