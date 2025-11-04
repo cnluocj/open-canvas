@@ -262,6 +262,9 @@ const InstructionMessageComponent = ({
 }: {
   instruction: InstructionState;
 }) => {
+  const message = useMessage();
+  const { isLast } = message;
+
   const actionMeta =
     instruction.type === "parsed"
       ? INSTRUCTION_ACTION_META[instruction.action]
@@ -270,22 +273,39 @@ const InstructionMessageComponent = ({
   const ActionIcon = actionMeta?.Icon ?? MessageCircle;
   const isPending = instruction.type === "pending";
 
+  // 判断状态：进行中 vs 已完成
+  const isInProgress = isPending || (instruction.type === "parsed" && isLast);
+  const isCompleted = instruction.type === "parsed" && !isLast;
+
   return (
-    <MessagePrimitive.Root className="relative grid w-full max-w-2xl grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] py-4">
-      <Avatar className="col-start-1 row-span-full row-start-1 mr-4">
-        <AvatarFallback>A</AvatarFallback>
-      </Avatar>
+    <>
+      <style>{`
+        @keyframes breathe {
+          0%, 100% { background-color: rgb(255, 255, 255); }
+          50% { background-color: rgb(156, 163, 175); }
+        }
+        .animate-breathe {
+          animation: breathe 2s ease-in-out infinite;
+        }
+      `}</style>
+      <MessagePrimitive.Root className="relative grid w-full max-w-2xl grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] py-4">
+        <Avatar className="col-start-1 row-span-full row-start-1 mr-4">
+          <AvatarFallback>A</AvatarFallback>
+        </Avatar>
 
       <div className="col-span-2 col-start-2 row-start-1 my-1.5 max-w-xl break-words leading-7">
         <div className="rounded-2xl border border-dashed border-muted-foreground/40 bg-muted/40 px-5 py-4 shadow-sm">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-              {isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <ActionIcon className="h-4 w-4" />
-              )}
-            </div>
+            {isInProgress ? (
+              // 进行中：白色到灰色呼吸圆点
+              <div className="h-3 w-3 flex-shrink-0 rounded-full animate-breathe mt-2" />
+            ) : isCompleted ? (
+              // 已完成：绿色静态圆点
+              <div className="h-3 w-3 flex-shrink-0 rounded-full bg-green-500 mt-2" />
+            ) : (
+              // 回退（不应该出现）
+              <ActionIcon className="h-4 w-4 flex-shrink-0 mt-1.5" />
+            )}
             <div className="flex flex-col gap-2 text-sm leading-6 text-muted-foreground">
               <div className="text-base font-medium text-foreground">
                 {isPending
@@ -301,7 +321,8 @@ const InstructionMessageComponent = ({
           </div>
         </div>
       </div>
-    </MessagePrimitive.Root>
+      </MessagePrimitive.Root>
+    </>
   );
 };
 
