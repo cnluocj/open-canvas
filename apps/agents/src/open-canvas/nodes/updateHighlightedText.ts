@@ -111,9 +111,11 @@ export const updateHighlightedText = async (
   const { markdownBlock, selectedText, fullMarkdown, replacementText } =
     state.highlightedText;
 
-  const recentUserMessage = state._messages[state._messages.length - 1];
-  if (recentUserMessage.getType() !== "human") {
-    throw new Error("Expected a human message");
+  const recentUserMessage = state._messages.findLast(
+    (message) => message.getType() === "human"
+  );
+  if (!recentUserMessage) {
+    throw new Error("No recent human message found");
   }
 
   let responseContent: string;

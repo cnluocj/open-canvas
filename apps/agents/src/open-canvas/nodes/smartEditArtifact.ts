@@ -144,6 +144,11 @@ ${state.extractedMaterial.compressedContent}`
       `[Smart Edit] Could not locate edit target after trying all matching strategies`
     );
     console.warn(`[Smart Edit] Error: ${matchResult.error?.message}`);
+    console.warn(`[Smart Edit] oldString length: ${currentEdit.oldString.length} chars`);
+    console.warn(
+      `[Smart Edit] oldString preview: ${JSON.stringify(currentEdit.oldString.substring(0, 200))}`
+    );
+    console.warn(`[Smart Edit] Artifact content length: ${artifactContent.length} chars`);
     console.warn(`[Smart Edit] Looking for: ${currentEdit.oldString.substring(0, 100)}...`);
 
     // Route to clarifyIntent to ask user for more specific location

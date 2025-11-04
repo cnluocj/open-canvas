@@ -155,10 +155,9 @@ export async function analyzeEditType({
     isToolCalling: true,
   });
 
-  // Show more context if the artifact is small enough
-  const contentPreview = artifactContent.length <= 3000
-    ? artifactContent
-    : `${artifactContent.substring(0, 2000)}\n\n... (content truncated, ${artifactContent.length} chars total) ...\n\n${artifactContent.substring(artifactContent.length - 1000)}`;
+  // Always provide full content to LLM to ensure extracted oldString can be matched
+  // Modern LLMs can handle large contexts, and accuracy is more important than token cost
+  const contentPreview = artifactContent;
 
   // Build highlighted content info if present
   let highlightedInfo = "";
