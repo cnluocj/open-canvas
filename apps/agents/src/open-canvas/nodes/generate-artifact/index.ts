@@ -1,5 +1,4 @@
 import {
-  createContextDocumentMessages,
   getFormattedReflections,
   getModelConfig,
   getModelFromConfig,
@@ -55,10 +54,9 @@ export const generateArtifact = async (
     ? `${userSystemPrompt}\n\n---\n\n${formattedNewArtifactPrompt}`
     : formattedNewArtifactPrompt;
 
-  const contextDocumentMessages = await createContextDocumentMessages(config);
   const isO1MiniModel = isUsingO1MiniModel(config);
 
-  // Add extracted material from medical case documents if available
+  // Only use compressed extracted material, not raw documents
   const extractedMaterialMessages = [];
   if (state.extractedMaterial) {
     const materialContent = `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
@@ -75,7 +73,6 @@ ${state.extractedMaterial.compressedContent}
   const response = await modelWithArtifactTool.invoke(
     [
       { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },
-      ...contextDocumentMessages,
       ...extractedMaterialMessages,
       ...state._messages,
     ],

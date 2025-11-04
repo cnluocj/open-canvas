@@ -2,7 +2,6 @@ import { LangGraphRunnableConfig } from "@langchain/langgraph";
 import { getArtifactContent } from "@opencanvas/shared/utils/artifacts";
 import { Reflections } from "@opencanvas/shared/types";
 import {
-  createContextDocumentMessages,
   ensureStoreInConfig,
   formatArtifactContentWithTemplate,
   formatReflections,
@@ -63,11 +62,22 @@ You also have the following reflections on style guidelines and general memories
         : NO_ARTIFACT_PROMPT
     );
 
-  const contextDocumentMessages = await createContextDocumentMessages(config);
   const isO1MiniModel = isUsingO1MiniModel(config);
+
+  // Only use compressed extracted material, not raw documents
+  const extractedMaterialMessages = [];
+  if (state.extractedMaterial) {
+    extractedMaterialMessages.push({
+      role: isO1MiniModel ? "user" : "system",
+      content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+
+${state.extractedMaterial.compressedContent}`,
+    });
+  }
+
   const response = await smallModel.invoke([
     { role: isO1MiniModel ? "user" : "system", content: formattedPrompt },
-    ...contextDocumentMessages,
+    ...extractedMaterialMessages,
     ...state._messages,
   ]);
 
