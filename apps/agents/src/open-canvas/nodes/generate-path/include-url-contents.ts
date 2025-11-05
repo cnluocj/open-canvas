@@ -3,17 +3,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { initChatModel } from "langchain/chat_models/universal";
 import { traceable } from "langsmith/traceable";
 import z from "zod";
-
-const PROMPT = `You're an advanced AI assistant.
-You have been tasked with analyzing the user's message and determining if the user wants the contents of the URL included in their message included in their prompt.
-You should ONLY answer 'true' if it is explicitly clear the user included the URL in their message so that its contents would be included in the prompt, otherwise, answer 'false'
-
-Here is the user's message:
-<message>
-{message}
-</message>
-
-Now, given their message, determine whether or not they want the contents of that webpage to be included in the prompt.`;
+import { INCLUDE_URL_CONTENTS_PROMPT } from "../../prompts.js";
 
 const schema = z
   .object({
@@ -80,7 +70,7 @@ async function includeURLContentsFunc(
       }
     );
 
-    const formattedPrompt = PROMPT.replace("{message}", prompt);
+    const formattedPrompt = INCLUDE_URL_CONTENTS_PROMPT.replace("{message}", prompt);
 
     const result = await model.invoke([["user", formattedPrompt]]);
 

@@ -7,49 +7,23 @@ import {
 } from "../state.js";
 import { getModelFromConfig } from "../../utils.js";
 import { buildContextMessages } from "./utils/contextBuilder.js";
+import {
+  MEDICAL_REPORT_SYSTEM_PROMPT_BASE,
+  MEDICAL_REPORT_SYSTEM_PROMPT_NURSING,
+  MEDICAL_REPORT_SYSTEM_PROMPT_TREATMENT,
+} from "../prompts.js";
 
 /**
  * 病案报告助手的系统 Prompt（根据reportType动态生成）
  */
 function getMedicalReportSystemPrompt(reportType?: string): string {
-  const basePrompt = `你是一个专业的病案报告助手。
-
-**核心职责**：
-1. 收集撰写报告所需的基础信息：
-   - 报告医生姓名
-   - 所在医院
-   - 报告标题
-   - 患者相关信息
-
-2. 如果信息不完整，必须主动询问用户补充
-
-3. 信息完整后，生成专业、规范的病案报告
-
-**工作原则**：
-- 保持专业、严谨的态度
-- 确保报告内容准确、完整
-- 使用规范的医疗术语
-
-**工具提示**：
-- 使用 set_report_type 工具可以设置或询问报告类型；如果需要询问用户，请调用该工具但不要传入参数，我会代你提问`;
-
+  let prompt = MEDICAL_REPORT_SYSTEM_PROMPT_BASE;
   if (reportType === "treatment") {
-    return `${basePrompt}
-
-**当前报告类型：治疗类病案报告**
-- 重点关注：疾病诊断、治疗方案、治疗效果
-- 包含内容：详细的诊疗决策分析、治疗过程记录
-- 撰写视角：从治疗角度出发，展现医疗决策思路`;
+    prompt += MEDICAL_REPORT_SYSTEM_PROMPT_TREATMENT;
   } else if (reportType === "nursing") {
-    return `${basePrompt}
-
-**当前报告类型：护理类病案报告**
-- 重点关注：护理评估、护理措施、护理效果
-- 包含内容：护理诊断、护理计划、护理实施记录
-- 撰写视角：从护理角度出发，展现护理专业性`;
+    prompt += MEDICAL_REPORT_SYSTEM_PROMPT_NURSING;
   }
-
-  return basePrompt;
+  return prompt;
 }
 
 /**

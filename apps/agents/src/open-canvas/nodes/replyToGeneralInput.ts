@@ -8,7 +8,11 @@ import {
   getModelFromConfig,
   isUsingO1MiniModel,
 } from "../../utils.js";
-import { CURRENT_ARTIFACT_PROMPT, NO_ARTIFACT_PROMPT } from "../prompts.js";
+import {
+  CURRENT_ARTIFACT_PROMPT,
+  GENERAL_INPUT_RESPONSE_PROMPT,
+  NO_ARTIFACT_PROMPT,
+} from "../prompts.js";
 import {
   OpenCanvasGraphAnnotation,
   OpenCanvasGraphReturnType,
@@ -22,17 +26,6 @@ export const replyToGeneralInput = async (
   config: LangGraphRunnableConfig
 ): Promise<OpenCanvasGraphReturnType> => {
   const smallModel = await getModelFromConfig(config);
-
-  const prompt = `You are an AI assistant tasked with responding to the users question.
-  
-The user has generated artifacts in the past. Use the following artifacts as context when responding to the users question.
-
-You also have the following reflections on style guidelines and general memories/facts about the user to use when generating your response.
-<reflections>
-{reflections}
-</reflections>
-
-{currentArtifactPrompt}`;
 
   const currentArtifactContent = state.artifact
     ? getArtifactContent(state.artifact)
@@ -50,7 +43,7 @@ You also have the following reflections on style guidelines and general memories
     ? formatReflections(memories.value as Reflections)
     : "No reflections found.";
 
-  const formattedPrompt = prompt
+  const formattedPrompt = GENERAL_INPUT_RESPONSE_PROMPT
     .replace("{reflections}", memoriesAsString)
     .replace(
       "{currentArtifactPrompt}",
