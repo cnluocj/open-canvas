@@ -23,6 +23,7 @@ import {
   extractThinkingAndResponseTokens,
   isThinkingModel,
 } from "@opencanvas/shared/utils/thinking";
+import { getTemplateMessage } from "../../utils/templateInjection.js";
 
 export const rewriteArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
@@ -62,9 +63,9 @@ export const rewriteArtifact = async (
   const isO1MiniModel = isUsingO1MiniModel(config);
 
   // 只使用压缩后的材料，不使用原始文档
-  const extractedMaterialMessages = [];
+  const systemMessages = [];
   if (state.extractedMaterial) {
-    extractedMaterialMessages.push({
+    systemMessages.push({
       role: isO1MiniModel ? "user" : "system",
       content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
 
@@ -72,9 +73,20 @@ ${state.extractedMaterial.compressedContent}`,
     });
   }
 
+  // Inject report template for medical reports
+  if (state.reportType && state.reportType !== "unknown") {
+    const templateMessage = getTemplateMessage(state.reportType);
+    if (templateMessage) {
+      systemMessages.push({
+        role: isO1MiniModel ? "user" : "system",
+        content: templateMessage.content as string,
+      });
+    }
+  }
+
   const newArtifactResponse = await smallModelWithConfig.invoke([
     { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },
-    ...extractedMaterialMessages,
+    ...systemMessages,
     recentHumanMessage,
   ]);
 

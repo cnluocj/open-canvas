@@ -14,6 +14,7 @@ import {
 import { ARTIFACT_TOOL_SCHEMA } from "./schemas.js";
 import { createArtifactContent, formatNewArtifactPrompt } from "./utils.js";
 import { z } from "zod";
+import { getTemplateMessage } from "../../utils/templateInjection.js";
 
 /**
  * Generate a new artifact based on the user's query.
@@ -57,7 +58,7 @@ export const generateArtifact = async (
   const isO1MiniModel = isUsingO1MiniModel(config);
 
   // Only use compressed extracted material, not raw documents
-  const extractedMaterialMessages = [];
+  const systemMessages = [];
   if (state.extractedMaterial) {
     const materialContent = `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
 
@@ -65,15 +66,27 @@ ${state.extractedMaterial.compressedContent}
 
 请基于以上提取的病例材料撰写报告。`;
 
-    extractedMaterialMessages.push({
+    systemMessages.push({
       role: isO1MiniModel ? "user" : "system",
       content: materialContent,
     });
   }
+
+  // Inject report template for medical reports
+  if (state.reportType && state.reportType !== "unknown") {
+    const templateMessage = getTemplateMessage(state.reportType);
+    if (templateMessage) {
+      systemMessages.push({
+        role: isO1MiniModel ? "user" : "system",
+        content: templateMessage.content as string,
+      });
+    }
+  }
+
   const response = await modelWithArtifactTool.invoke(
     [
       { role: isO1MiniModel ? "user" : "system", content: fullSystemPrompt },
-      ...extractedMaterialMessages,
+      ...systemMessages,
       ...state._messages,
     ],
     { runName: "generate_artifact" }
