@@ -25,7 +25,7 @@ import { HumanMessage } from "@langchain/core/messages";
 import { OC_HIDE_FROM_UI_KEY } from "@opencanvas/shared/constants";
 import { Button } from "../ui/button";
 import { WEB_SEARCH_RESULTS_QUERY_PARAM, ARTIFACT_DIFF_QUERY_PARAM } from "@/constants";
-import { Globe, FileText, Loader2, MessageCircle, Sparkles, PencilLine } from "lucide-react";
+import { Globe, FileText, MessageCircle, Sparkles, PencilLine } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 interface AssistantMessageProps {

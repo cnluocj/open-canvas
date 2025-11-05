@@ -9,12 +9,17 @@ import {
   getCompressMaterialUserPrompt,
 } from "../prompts/compress";
 import { getModelFromConfig } from "../../utils";
-import { getReportTemplate } from "@opencanvas/shared/templates/index";
 import type { ExtractedMaterial } from "@opencanvas/shared/types";
+import { countChineseCharacters } from "@opencanvas/shared/utils/text";
+
+/**
+ * 中文字数阈值：小于此值时无需调用 LLM 压缩
+ */
+const CHINESE_CHAR_THRESHOLD = 5000;
 
 /**
  * 压缩材料节点
- * 根据报告类型和模版，从原始材料中提取和压缩关键信息
+ * 智能压缩：中文字数 < 5000 直接返回，≥ 5000 调用 LLM 进行噪声过滤和关键信息提取
  */
 export const compressMaterial = async (
   state: MaterialProcessingState,
@@ -37,22 +42,49 @@ export const compressMaterial = async (
     }
 
     // 获取文档内容
-    const document = documents[0];
-    const materialContent = document.data;
+    const firstDocument = documents[0];
+    const materialContent = firstDocument.data;
 
-    // 获取对应的模版
-    const template = getReportTemplate(reportType);
+    // 统计中文字数
+    const chineseCharCount = countChineseCharacters(materialContent);
 
-    if (!template) {
+    // 如果中文字数少于阈值，直接返回原内容
+    if (chineseCharCount < CHINESE_CHAR_THRESHOLD) {
+      const extractedMaterial: ExtractedMaterial = {
+        type: reportType,
+        compressedContent: materialContent, // 直接使用原内容
+        template: reportType === "treatment" ? "治疗类" : "护理类",
+        originalDocumentName: firstDocument.name,
+        confidence: state.confidence,
+        isUserConfirmed: state.needUserConfirmation
+          ? false
+          : state.confidence >= 0.7,
+      };
+
+      const skipMessage = new AIMessage({
+        content: `✅ 已处理病例材料！
+
+**文档名称**: ${firstDocument.name}
+**报告类型**: ${reportType === "treatment" ? "治疗类" : "护理类"}
+**中文字数**: ${chineseCharCount} 字
+**处理方式**: 内容较短，无需压缩，直接使用
+
+材料已准备就绪，现在您可以开始撰写病案报告了。`,
+      });
+
       return {
-        error: `未找到 ${reportType} 类型的报告模版`,
+        extractedMaterial,
+        messages: [skipMessage],
       };
     }
 
-    // 准备 prompts
+    // 中文字数 >= 5000，调用 LLM 进行压缩
+    console.log(`[compressMaterial] 中文字数 ${chineseCharCount} 字，开始调用 LLM 压缩...`);
+
+    // 准备 prompts（不再使用模板）
     const systemMessage = new SystemMessage(COMPRESS_MATERIAL_SYSTEM_PROMPT);
     const userMessage = new HumanMessage(
-      getCompressMaterialUserPrompt(reportType, template, materialContent)
+      getCompressMaterialUserPrompt(reportType, materialContent)
     );
 
     // 获取模型
@@ -71,29 +103,37 @@ export const compressMaterial = async (
       };
     }
 
+    // 统计压缩后的中文字数
+    const compressedChineseCharCount = countChineseCharacters(compressedContent);
+
     // 构建 ExtractedMaterial 对象
     const extractedMaterial: ExtractedMaterial = {
       type: reportType,
       compressedContent,
       template: reportType === "treatment" ? "治疗类" : "护理类",
-      originalDocumentName: document.name,
+      originalDocumentName: firstDocument.name,
       confidence: state.confidence,
       isUserConfirmed: state.needUserConfirmation
         ? false
         : state.confidence >= 0.7,
     };
 
+    // 计算压缩率（基于中文字数）
+    const compressionRate = Math.round(
+      (1 - compressedChineseCharCount / chineseCharCount) * 100
+    );
+
     // 生成成功消息
     const successMessage = new AIMessage({
-      content: `✅ 已成功处理病例材料！
+      content: `✅ 已成功压缩病例材料！
 
-**文档名称**: ${document.name}
+**文档名称**: ${firstDocument.name}
 **报告类型**: ${reportType === "treatment" ? "治疗类" : "护理类"}
-**原始材料**: ${materialContent.length} 字
-**压缩后**: ${compressedContent.length} 字
-**压缩率**: ${Math.round((1 - compressedContent.length / materialContent.length) * 100)}%
+**原始字数**: ${chineseCharCount} 字（中文）
+**压缩后**: ${compressedChineseCharCount} 字（中文）
+**压缩率**: ${compressionRate}%
 
-材料已经提取并压缩完毕，现在您可以开始撰写病案报告了。`,
+已完成噪声过滤和关键信息提取，现在您可以开始撰写病案报告了。`,
     });
 
     return {
