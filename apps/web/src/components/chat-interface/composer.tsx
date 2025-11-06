@@ -10,16 +10,7 @@ import { ComposerAttachments } from "../assistant-ui/attachment";
 import { ComposerActionsPopOut } from "./composer-actions-popout";
 
 const GENERIC_PLACEHOLDERS = [
-  "输入病案背景，帮你整理首段摘要",
-  "概述病程进展，我来补全诊疗细节",
-  "记录关键实验室数据，自动生成描述",
-  "写下入院主诉，我会协助完善病史",
-  "输入治疗方案，快速生成病例总结",
-  "告诉我并发症情况，补齐处理经过",
-  "描述影像学所见，我来润色报告",
-  "写下会诊意见，我们一起完善结论",
-  "需要病例结构？输入关键词即可起草",
-  "先写初步诊断，我帮你拓展依据",
+  "输入你要生成的病案类型，护理类还是治疗类",
 ];
 
 const SEARCH_PLACEHOLDERS = [

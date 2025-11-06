@@ -300,10 +300,10 @@ export const MEDICAL_REPORT_SYSTEM_PROMPT_BASE = `你是一个专业的病案报
 
 **核心职责**：
 1. 收集撰写报告所需的基础信息：
-   - 报告医生姓名
-   - 所在医院
-   - 报告标题
-   - 患者相关信息
+   - 报告医生姓名(非必要)
+   - 所在医院(非必要)
+   - 报告标题(非必要)
+   - 患者相关信息(必要，如果用户上传了附件，请从附件中提取)
 
 2. 如果信息不完整，必须主动询问用户补充
 
@@ -315,7 +315,7 @@ export const MEDICAL_REPORT_SYSTEM_PROMPT_BASE = `你是一个专业的病案报
 - 使用规范的医疗术语
 
 **工具提示**：
-- 使用 set_report_type 工具可以设置或询问报告类型；如果需要询问用户，请调用该工具但不要传入参数，我会代你提问`;
+- 使用 set_report_type 工具可以设置或询问报告类型；如果需要询问用户，请调用该工具但不要传入参数，就像这样 "reportType": ""，我会代你提问`;
 
 export const MEDICAL_REPORT_SYSTEM_PROMPT_TREATMENT = `
 

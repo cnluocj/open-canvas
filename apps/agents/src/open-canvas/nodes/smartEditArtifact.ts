@@ -11,6 +11,7 @@ import { performSmartEdit } from "@opencanvas/shared/utils/editing";
 import { analyzeEditType } from "./rewrite-artifact/utils.js";
 import { isUsingO1MiniModel } from "../../utils.js";
 import { BaseMessage, SystemMessage, HumanMessage } from "@langchain/core/messages";
+import { shouldInjectMaterial } from "../utils/materialInjection.js";
 
 /**
  * Smart Edit node: Analyzes user requests and applies targeted edits to specific
@@ -48,15 +49,15 @@ export const smartEditArtifact = async (
 
     console.log("[Smart Edit] Analyzing edit request...");
 
-    // 只使用压缩后的材料，不使用原始文档
+    // Inject extracted material if configured (default: false for update)
     const extractedMaterialMessages: BaseMessage[] = [];
-    if (state.extractedMaterial) {
+    if (shouldInjectMaterial(state, "update")) {
       const isO1MiniModel = isUsingO1MiniModel(config);
       extractedMaterialMessages.push(
         new (isO1MiniModel ? HumanMessage : SystemMessage)(
-          `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+          `**已提取的病例材料（来自附件：${state.extractedMaterial!.originalDocumentName}）**：
 
-${state.extractedMaterial.compressedContent}`
+${state.extractedMaterial!.compressedContent}`
         )
       );
     }

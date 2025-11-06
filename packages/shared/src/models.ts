@@ -462,6 +462,27 @@ const GROQ_MODELS: ModelConfigurationParams[] = [
 ];
 
 const OPENROUTER_MODELS: ModelConfigurationParams[] = [
+    {
+    name: "openai/gpt-4.1",
+    label: "GPT-4.1 (OpenRouter)",
+    modelName: "openrouter/openai/gpt-4.1",
+    config: {
+      provider: "openrouter",
+      temperatureRange: {
+        min: 0,
+        max: 1,
+        default: 0.5,
+        current: 0.5,
+      },
+      maxTokens: {
+        min: 1,
+        max: 8_192,
+        default: 4_096,
+        current: 4_096,
+      },
+    },
+    isNew: false,
+  },
   {
     name: "openai/gpt-4o-mini",
     label: "GPT-4o mini (OpenRouter)",
@@ -498,27 +519,6 @@ const OPENROUTER_MODELS: ModelConfigurationParams[] = [
       maxTokens: {
         min: 1,
         max: 16_384,
-        default: 4_096,
-        current: 4_096,
-      },
-    },
-    isNew: false,
-  },
-  {
-    name: "anthropic/claude-3-5-sonnet",
-    label: "Claude 3.5 Sonnet (OpenRouter)",
-    modelName: "openrouter/anthropic/claude-3-5-sonnet",
-    config: {
-      provider: "openrouter",
-      temperatureRange: {
-        min: 0,
-        max: 1,
-        default: 0.5,
-        current: 0.5,
-      },
-      maxTokens: {
-        min: 1,
-        max: 8_192,
         default: 4_096,
         current: 4_096,
       },

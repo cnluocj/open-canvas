@@ -20,6 +20,7 @@ import {
   OpenCanvasGraphReturnType,
 } from "../state.js";
 import { UPDATE_HIGHLIGHTED_TEXT_PROMPT } from "../prompts.js";
+import { shouldInjectMaterial } from "../utils/materialInjection.js";
 
 /**
  * Update an existing artifact based on the user's query.
@@ -103,14 +104,14 @@ export const updateHighlightedText = async (
 
     const isO1MiniModel = isUsingO1MiniModel(config);
 
-    // 只使用压缩后的材料，不使用原始文档
+    // Inject extracted material if configured (default: false for update)
     const extractedMaterialMessages = [];
-    if (state.extractedMaterial) {
+    if (shouldInjectMaterial(state, "update")) {
       extractedMaterialMessages.push({
         role: isO1MiniModel ? "user" : "system",
-        content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+        content: `**已提取的病例材料（来自附件：${state.extractedMaterial!.originalDocumentName}）**：
 
-${state.extractedMaterial.compressedContent}`,
+${state.extractedMaterial!.compressedContent}`,
       });
     }
 
