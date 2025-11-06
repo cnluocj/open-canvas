@@ -15,11 +15,11 @@ import { countChineseCharacters } from "@opencanvas/shared/utils/text";
 /**
  * 中文字数阈值：小于此值时无需调用 LLM 压缩
  */
-const CHINESE_CHAR_THRESHOLD = 5000;
+const CHINESE_CHAR_THRESHOLD = 50000;
 
 /**
  * 压缩材料节点
- * 智能压缩：中文字数 < 5000 直接返回，≥ 5000 调用 LLM 进行噪声过滤和关键信息提取
+ * 智能压缩：中文字数 < CHINESE_CHAR_THRESHOLD 直接返回，≥ CHINESE_CHAR_THRESHOLD 调用 LLM 进行噪声过滤和关键信息提取
  */
 export const compressMaterial = async (
   state: MaterialProcessingState,

@@ -24,6 +24,7 @@ import {
   isThinkingModel,
 } from "@opencanvas/shared/utils/thinking";
 import { getTemplateMessage } from "../../utils/templateInjection.js";
+import { shouldInjectMaterial } from "../../utils/materialInjection.js";
 
 export const rewriteArtifact = async (
   state: typeof OpenCanvasGraphAnnotation.State,
@@ -62,14 +63,14 @@ export const rewriteArtifact = async (
 
   const isO1MiniModel = isUsingO1MiniModel(config);
 
-  // 只使用压缩后的材料，不使用原始文档
+  // Inject extracted material if configured (default: true for rewrite)
   const systemMessages = [];
-  if (state.extractedMaterial) {
+  if (shouldInjectMaterial(state, "rewrite")) {
     systemMessages.push({
       role: isO1MiniModel ? "user" : "system",
-      content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+      content: `**已提取的病例材料（来自附件：${state.extractedMaterial!.originalDocumentName}）**：
 
-${state.extractedMaterial.compressedContent}`,
+${state.extractedMaterial!.compressedContent}`,
     });
   }
 

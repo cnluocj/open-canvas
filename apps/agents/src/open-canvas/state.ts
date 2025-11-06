@@ -164,6 +164,24 @@ export const OpenCanvasGraphAnnotation = Annotation.Root({
    * 由用户明确选择，用于指导材料压缩和报告生成
    */
   reportType: Annotation<ReportType | undefined>,
+  /**
+   * 生成新文章时是否注入病例材料
+   * Whether to inject extracted material content when generating new artifacts
+   * @default true
+   */
+  injectMaterialOnGenerate: Annotation<boolean | undefined>,
+  /**
+   * 重写整篇文章时是否注入病例材料
+   * Whether to inject extracted material content when rewriting entire artifacts
+   * @default true
+   */
+  injectMaterialOnRewrite: Annotation<boolean | undefined>,
+  /**
+   * 更新文章（部分编辑）时是否注入病例材料
+   * Whether to inject extracted material content when updating artifacts (partial edits)
+   * @default false - 更新时通常不需要完整材料，避免 token 浪费
+   */
+  injectMaterialOnUpdate: Annotation<boolean | undefined>,
 });
 
 export type OpenCanvasGraphReturnType = Partial<

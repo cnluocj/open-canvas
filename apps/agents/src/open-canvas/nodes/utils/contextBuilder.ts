@@ -121,36 +121,20 @@ ${attachmentInfo}
     messages.push(attachmentMessage);
   }
 
-  // 4. 如果材料已经提取并压缩，注入压缩后的内容
+  // 4. 如果材料已经提取并压缩，注入简短提示（节省 token）
   if (state.extractedMaterial) {
     const materialTypeName = state.extractedMaterial.type === "treatment" ? "治疗类" : "护理类";
-    const confidencePercent = state.extractedMaterial.confidence
-      ? Math.round(state.extractedMaterial.confidence * 100)
-      : null;
+    const charCount = state.extractedMaterial.compressedContent.length;
 
-    const materialContext = `**已提取的病例材料**：
+    const materialContext = `📎 **已提取病例材料**
+- 文档：${state.extractedMaterial.originalDocumentName}
+- 类型：${materialTypeName}病案
+- 字数：约 ${Math.round(charCount / 1000)}k 字
 
-**来源文档**: ${state.extractedMaterial.originalDocumentName}
-**报告类型**: ${materialTypeName}
-**提取模板**: ${state.extractedMaterial.template}${confidencePercent ? `\n**分类置信度**: ${confidencePercent}%` : ""}
-${state.extractedMaterial.isUserConfirmed ? "**确认方式**: 用户手动确认" : ""}
-
----
-
-**压缩后的结构化内容**：
-
-${state.extractedMaterial.compressedContent}
-
----
-
-**重要提示**:
-- 以上病例材料已经从原始文档中提取并压缩完毕，可以直接使用
-- 材料已按照${materialTypeName}报告模板的结构组织
-- 如果用户要求生成报告，请直接使用 \`generate_report\` 工具，基于上述压缩内容撰写
-- **不要再次调用 \`process_material\` 工具**，材料已经处理完毕`;
+*注：完整材料已在系统中，生成报告时会自动使用，无需重复提取或询问。*`;
 
     messages.push(new SystemMessage(materialContext));
-    console.log("[contextBuilder] Injected extractedMaterial into context");
+    console.log("[contextBuilder] Injected brief material summary into context");
   }
 
   // 5. 如果用户选中了文字，添加选中信息

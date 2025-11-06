@@ -15,6 +15,7 @@ import { ARTIFACT_TOOL_SCHEMA } from "./schemas.js";
 import { createArtifactContent, formatNewArtifactPrompt } from "./utils.js";
 import { z } from "zod";
 import { getTemplateMessage } from "../../utils/templateInjection.js";
+import { shouldInjectMaterial } from "../../utils/materialInjection.js";
 
 /**
  * Generate a new artifact based on the user's query.
@@ -57,12 +58,12 @@ export const generateArtifact = async (
 
   const isO1MiniModel = isUsingO1MiniModel(config);
 
-  // Only use compressed extracted material, not raw documents
+  // Inject extracted material if configured (default: true for generate)
   const systemMessages = [];
-  if (state.extractedMaterial) {
-    const materialContent = `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+  if (shouldInjectMaterial(state, "generate")) {
+    const materialContent = `**已提取的病例材料（来自附件：${state.extractedMaterial!.originalDocumentName}）**：
 
-${state.extractedMaterial.compressedContent}
+${state.extractedMaterial!.compressedContent}
 
 请基于以上提取的病例材料撰写报告。`;
 

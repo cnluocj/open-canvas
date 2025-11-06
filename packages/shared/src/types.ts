@@ -270,4 +270,8 @@ export interface GraphInput {
 
   webSearchEnabled?: boolean;
   webSearchResults?: SearchResult[];
+
+  injectMaterialOnGenerate?: boolean;
+  injectMaterialOnRewrite?: boolean;
+  injectMaterialOnUpdate?: boolean;
 }

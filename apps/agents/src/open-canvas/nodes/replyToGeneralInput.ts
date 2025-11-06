@@ -57,14 +57,20 @@ export const replyToGeneralInput = async (
 
   const isO1MiniModel = isUsingO1MiniModel(config);
 
-  // Only use compressed extracted material, not raw documents
+  // Use brief summary instead of full content in main agent to save tokens
   const extractedMaterialMessages = [];
   if (state.extractedMaterial) {
+    const { originalDocumentName, type, compressedContent } = state.extractedMaterial;
+    const charCount = compressedContent.length;
+
     extractedMaterialMessages.push({
       role: isO1MiniModel ? "user" : "system",
-      content: `**已提取的病例材料（来自附件：${state.extractedMaterial.originalDocumentName}）**：
+      content: `📎 **已提取病例材料**
+- 文档：${originalDocumentName}
+- 类型：${type === 'treatment' ? '治疗类' : '护理类'}病案
+- 字数：约 ${Math.round(charCount / 1000)}k 字
 
-${state.extractedMaterial.compressedContent}`,
+*注：完整材料已在系统中，生成报告时会自动使用，无需重复提取或询问。*`,
     });
   }
 
