@@ -36,7 +36,11 @@ ${classificationReasoning}
    - 关注护理评估、护理措施、护理效果
    - 包含护理诊断和护理计划
 
-请回复"治疗类"或"护理类"。`,
+**3. 检验类病案报告**
+   - 关注实验室检验指导临床诊疗
+   - 包含动态监测和检验触发的决策
+
+请回复"治疗类"、"护理类"或"检验类"。`,
     });
 
     return {
@@ -56,7 +60,7 @@ ${classificationReasoning}
  * 这个函数在主 graph 中处理用户回复时调用
  */
 export function parseUserReportTypeResponse(userResponse: string): {
-  reportType: "treatment" | "nursing" | "unknown";
+  reportType: "treatment" | "nursing" | "laboratory" | "unknown";
   isUserConfirmed: boolean;
 } {
   const normalized = userResponse.trim().toLowerCase();
@@ -75,6 +79,14 @@ export function parseUserReportTypeResponse(userResponse: string): {
     normalized === "2"
   ) {
     return { reportType: "nursing", isUserConfirmed: true };
+  }
+
+  if (
+    normalized.includes("检验") ||
+    normalized.includes("laboratory") ||
+    normalized === "3"
+  ) {
+    return { reportType: "laboratory", isUserConfirmed: true };
   }
 
   return { reportType: "unknown", isUserConfirmed: false };

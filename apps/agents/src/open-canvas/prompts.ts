@@ -331,6 +331,13 @@ export const MEDICAL_REPORT_SYSTEM_PROMPT_NURSING = `
 - 包含内容：护理诊断、护理计划、护理实施记录
 - 撰写视角：从护理角度出发，展现护理专业性`;
 
+export const MEDICAL_REPORT_SYSTEM_PROMPT_LABORATORY = `
+
+**当前报告类型：检验类病案报告**
+- 重点关注：实验室检验指导临床诊疗的全过程
+- 包含内容：动态指标监测、检验触发决策、多学科协作
+- 撰写视角：从检验角度出发，展现检验在诊疗中的核心价值`;
+
 export const UPDATE_HIGHLIGHTED_TEXT_PROMPT = `You are an expert AI writing assistant, tasked with updating a specific part of an artifact.
 
 Here is the FULL artifact for context:

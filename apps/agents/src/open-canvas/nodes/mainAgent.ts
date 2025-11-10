@@ -11,6 +11,7 @@ import {
   MEDICAL_REPORT_SYSTEM_PROMPT_BASE,
   MEDICAL_REPORT_SYSTEM_PROMPT_NURSING,
   MEDICAL_REPORT_SYSTEM_PROMPT_TREATMENT,
+  MEDICAL_REPORT_SYSTEM_PROMPT_LABORATORY,
 } from "../prompts.js";
 
 /**
@@ -22,6 +23,8 @@ function getMedicalReportSystemPrompt(reportType?: string): string {
     prompt += MEDICAL_REPORT_SYSTEM_PROMPT_TREATMENT;
   } else if (reportType === "nursing") {
     prompt += MEDICAL_REPORT_SYSTEM_PROMPT_NURSING;
+  } else if (reportType === "laboratory") {
+    prompt += MEDICAL_REPORT_SYSTEM_PROMPT_LABORATORY;
   }
   return prompt;
 }
@@ -42,6 +45,7 @@ const tools = [
 **报告类型**：
 - treatment（治疗类）：关注诊断、治疗方案和效果，医生视角
 - nursing（护理类）：关注护理评估、措施和效果，护士视角
+- laboratory（检验类）：关注实验室检验指导诊疗，检验视角
 
 **设置后的后续操作**：
 - 设置类型后，检查上下文中是否有"检测到用户上传了X个病例文档"
@@ -51,7 +55,7 @@ const tools = [
 **重要**：相同病例可以写不同类型报告，取决于撰写视角。`,
     schema: z.object({
       reportType: z
-        .enum(["treatment", "nursing"])
+        .enum(["treatment", "nursing", "laboratory"])
         .optional()
         .describe("如果用户明确说明类型，则传入；否则省略此参数（将询问用户）"),
     }),
@@ -176,11 +180,14 @@ export const mainAgent = async (
 
     switch (toolCall.name) {
       case "set_report_type": {
-        const { reportType } = toolCall.args as { reportType?: "treatment" | "nursing" };
+        const { reportType } = toolCall.args as { reportType?: "treatment" | "nursing" | "laboratory" };
 
         if (reportType) {
           // 用户明确说明了类型，直接设置
-          const typeName = reportType === "treatment" ? "治疗类" : "护理类";
+          const typeName =
+            reportType === "treatment" ? "治疗类" :
+            reportType === "nursing" ? "护理类" :
+            "检验类";
           const confirmMessage = new AIMessage(
             `好的，已设置报告类型为${typeName}。`
           );
@@ -203,7 +210,11 @@ export const mainAgent = async (
    - 关注护理评估、护理措施、护理效果
    - 从护士/护理视角撰写
 
-请告诉我"治疗类"或"护理类"。`);
+**3. 检验类病案报告**
+   - 关注实验室检验指导临床诊疗
+   - 从检验/实验室视角撰写
+
+请告诉我"治疗类"、"护理类"或"检验类"。`);
           console.log("[mainAgent] Asking user for report type");
           return {
             messages: [questionMessage],

@@ -53,7 +53,7 @@ export const compressMaterial = async (
       const extractedMaterial: ExtractedMaterial = {
         type: reportType,
         compressedContent: materialContent, // 直接使用原内容
-        template: reportType === "treatment" ? "治疗类" : "护理类",
+        template: reportType === "treatment" ? "治疗类" : reportType === "nursing" ? "护理类" : "检验类",
         originalDocumentName: firstDocument.name,
         confidence: state.confidence,
         isUserConfirmed: state.needUserConfirmation
@@ -65,7 +65,7 @@ export const compressMaterial = async (
         content: `✅ 已处理病例材料！
 
 **文档名称**: ${firstDocument.name}
-**报告类型**: ${reportType === "treatment" ? "治疗类" : "护理类"}
+**报告类型**: ${reportType === "treatment" ? "治疗类" : reportType === "nursing" ? "护理类" : "检验类"}
 **中文字数**: ${chineseCharCount} 字
 **处理方式**: 内容较短，无需压缩，直接使用
 
@@ -110,7 +110,7 @@ export const compressMaterial = async (
     const extractedMaterial: ExtractedMaterial = {
       type: reportType,
       compressedContent,
-      template: reportType === "treatment" ? "治疗类" : "护理类",
+      template: reportType === "treatment" ? "治疗类" : reportType === "nursing" ? "护理类" : "检验类",
       originalDocumentName: firstDocument.name,
       confidence: state.confidence,
       isUserConfirmed: state.needUserConfirmation
@@ -128,7 +128,7 @@ export const compressMaterial = async (
       content: `✅ 已成功压缩病例材料！
 
 **文档名称**: ${firstDocument.name}
-**报告类型**: ${reportType === "treatment" ? "治疗类" : "护理类"}
+**报告类型**: ${reportType === "treatment" ? "治疗类" : reportType === "nursing" ? "护理类" : "检验类"}
 **原始字数**: ${chineseCharCount} 字（中文）
 **压缩后**: ${compressedChineseCharCount} 字（中文）
 **压缩率**: ${compressionRate}%

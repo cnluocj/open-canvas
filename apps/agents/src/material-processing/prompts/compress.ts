@@ -85,10 +85,13 @@ export const COMPRESS_MATERIAL_SYSTEM_PROMPT = `
  * @returns 用户 Prompt 字符串
  */
 export function getCompressMaterialUserPrompt(
-  reportType: "treatment" | "nursing",
+  reportType: "treatment" | "nursing" | "laboratory",
   materialContent: string
 ): string {
-  const typeLabel = reportType === "treatment" ? "治疗类" : "护理类";
+  const typeLabel =
+    reportType === "treatment" ? "治疗类" :
+    reportType === "nursing" ? "护理类" :
+    "检验类";
 
   return `请处理以下原始病例材料，清理噪声信息，完整保留所有临床内容。
 

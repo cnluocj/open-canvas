@@ -9,6 +9,7 @@ import type { ReportType } from "../types";
 const TEMPLATE_FILE_MAP: Record<ReportType, string> = {
   treatment: "治疗类病案报告通用模版.md",
   nursing: "护理类病案报告通用模版.md",
+  laboratory: "检验类病案报告通用模版.md",
   unknown: "", // unknown 类型不对应任何文件
 };
 

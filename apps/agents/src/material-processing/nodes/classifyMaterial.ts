@@ -19,9 +19,9 @@ const classifyMaterialSchema = z.object({
     .boolean()
     .describe("是否为病例材料（包含患者医疗相关信息）"),
   reportType: z
-    .enum(["treatment", "nursing", "unknown"])
+    .enum(["treatment", "nursing", "laboratory", "unknown"])
     .describe(
-      "报告类型：treatment-治疗类，nursing-护理类，unknown-无法判断"
+      "报告类型：treatment-治疗类，nursing-护理类，laboratory-检验类，unknown-无法判断"
     ),
   confidence: z
     .number()

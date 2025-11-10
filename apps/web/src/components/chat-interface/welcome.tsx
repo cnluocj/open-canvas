@@ -23,6 +23,7 @@ const QUICK_START_PROMPTS_SEARCH = [
 const QUICK_START_PROMPTS = [
   "护理型",
   "治疗型",
+  "检验型",
 ];
 
 function getRandomPrompts(prompts: string[], count: number = 4): string[] {

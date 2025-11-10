@@ -10,7 +10,7 @@ import { ComposerAttachments } from "../assistant-ui/attachment";
 import { ComposerActionsPopOut } from "./composer-actions-popout";
 
 const GENERIC_PLACEHOLDERS = [
-  "输入你要生成的病案类型，护理类还是治疗类",
+  "输入你要生成的病案类型：治疗类、护理类或检验类",
 ];
 
 const SEARCH_PLACEHOLDERS = [

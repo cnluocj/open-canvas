@@ -27,7 +27,10 @@ export function getTemplateMessage(reportType: ReportType): SystemMessage | null
     return null;
   }
 
-  const label = reportType === "treatment" ? "治疗类" : "护理类";
+  const label =
+    reportType === "treatment" ? "治疗类" :
+    reportType === "nursing" ? "护理类" :
+    "检验类";
 
   // 构建模板 system message
   return new SystemMessage(`## 📋 报告写作模板（${label}病案报告）

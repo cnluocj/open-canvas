@@ -200,7 +200,7 @@ export type ContextDocument = {
 /**
  * 病案报告类型
  */
-export type ReportType = "treatment" | "nursing" | "unknown";
+export type ReportType = "treatment" | "nursing" | "laboratory" | "unknown";
 
 /**
  * 压缩后的病例材料
