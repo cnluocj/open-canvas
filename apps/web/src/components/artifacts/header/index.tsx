@@ -50,8 +50,7 @@ export function ArtifactHeader(props: ArtifactHeaderProps) {
               const markdownContent = props.currentArtifactContent as ArtifactMarkdownV3;
               import("@/lib/export-to-word").then(({ exportToWord }) => {
                 exportToWord(
-                  markdownContent.fullMarkdown,
-                  markdownContent.title
+                  markdownContent.fullMarkdown
                 );
               });
             }
