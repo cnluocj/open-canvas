@@ -2,7 +2,7 @@ import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } fro
 import { saveAs } from "file-saver";
 
 export const exportToWord = async (content: string) => {
-  const lines = content.split("\n");
+  const lines = content.replaceAll("~~", "~").split("\n");
   const children: Paragraph[] = [];
   let docTitle = "Document";
   let disableIndentation = false;
@@ -131,7 +131,7 @@ export const exportToWord = async (content: string) => {
     }
     // Normal paragraph
     else {
-      let alignment: AlignmentType = AlignmentType.LEFT;
+      let alignment: any = AlignmentType.LEFT;
       let indent: any = { firstLine: 420 }; // ~2 chars at 10.5pt
 
       // Author Info: Content between Title and First Heading

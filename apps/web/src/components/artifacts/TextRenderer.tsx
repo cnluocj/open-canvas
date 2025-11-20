@@ -142,7 +142,7 @@ export function TextRendererComponent(props: TextRendererProps) {
       // Blocks are not found in the artifact, so once streaming is done we should update the artifact state with the blocks
       (async () => {
         const markdownAsBlocks = await editor.tryParseMarkdownToBlocks(
-          currentContent.fullMarkdown
+          currentContent.fullMarkdown.replaceAll("~~", "~")
         );
         editor.replaceBlocks(editor.document, markdownAsBlocks);
         setUpdateRenderedArtifactRequired(false);
