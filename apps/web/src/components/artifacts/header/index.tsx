@@ -3,7 +3,7 @@ import { ArtifactTitle } from "./artifact-title";
 import { NavigateArtifactHistory } from "./navigate-artifact-history";
 import { ArtifactCodeV3, ArtifactMarkdownV3 } from "@opencanvas/shared/types";
 import { Assistant } from "@langchain/langgraph-sdk";
-import { PanelRightClose } from "lucide-react";
+import { PanelRightClose, FileDown } from "lucide-react";
 import { TooltipIconButton } from "@/components/ui/assistant-ui/tooltip-icon-button";
 
 interface ArtifactHeaderProps {
@@ -41,6 +41,25 @@ export function ArtifactHeader(props: ArtifactHeaderProps) {
         />
       </div>
       <div className="flex gap-2 items-end mt-[10px] mr-[6px]">
+        <TooltipIconButton
+          tooltip="导出为 Word"
+          variant="ghost"
+          className="w-8 h-8"
+          onClick={() => {
+            if (props.currentArtifactContent.type === "text") {
+              const markdownContent = props.currentArtifactContent as ArtifactMarkdownV3;
+              import("@/lib/export-to-word").then(({ exportToWord }) => {
+                exportToWord(
+                  markdownContent.fullMarkdown,
+                  markdownContent.title
+                );
+              });
+            }
+          }}
+          disabled={props.currentArtifactContent.type !== "text"}
+        >
+          <FileDown className="text-gray-600" />
+        </TooltipIconButton>
         <NavigateArtifactHistory
           isBackwardsDisabled={props.isBackwardsDisabled}
           isForwardDisabled={props.isForwardDisabled}
