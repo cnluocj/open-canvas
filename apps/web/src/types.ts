@@ -81,3 +81,43 @@ export interface ModelConfig {
     azureOpenAIBasePath?: string;
   };
 }
+
+// Source types
+export type SourceType = "file" | "link" | "text";
+
+export interface BaseSource {
+  id: string;
+  name: string;
+  type: SourceType;
+  createdAt: Date;
+  enabled: boolean;
+  content: string;
+  metadata?: {
+    size?: number;
+    fileType?: string;
+    url?: string;
+    outline?: string[];
+  };
+}
+
+export interface SourceFile extends BaseSource {
+  type: "file";
+  metadata: {
+    size: number;
+    fileType: string;
+  };
+}
+
+export interface SourceLink extends BaseSource {
+  type: "link";
+  metadata: {
+    url: string;
+    title?: string;
+  };
+}
+
+export interface SourceText extends BaseSource {
+  type: "text";
+}
+
+export type Source = SourceFile | SourceLink | SourceText;

@@ -23,6 +23,8 @@ import {
 } from "../state.js";
 import { getTemplateMessage } from "../utils/templateInjection.js";
 import { shouldInjectMaterial } from "../utils/materialInjection.js";
+import { SOURCES_NAMESPACE } from "@opencanvas/shared/constants";
+import { Source } from "@opencanvas/shared/types";
 
 /**
  * Update an existing artifact based on the user's query.
@@ -120,6 +122,50 @@ export const updateArtifact = async (
 
   // Inject extracted material if configured (default: false for update)
   const systemMessages = [];
+
+  // Inject sources (persistent reference materials)
+  if (config.store && config.configurable?.thread_id) {
+    try {
+      const sourcesResult = await config.store.get(SOURCES_NAMESPACE, config.configurable.thread_id);
+      const sources = (sourcesResult?.value as any)?.sources || [];
+      const enabledSources = sources.filter((s: Source) => s.enabled);
+
+      if (enabledSources.length > 0) {
+        console.log(`[updateArtifact] Found ${enabledSources.length} enabled sources`);
+
+        // Use full content with 50000 char limit
+        const sourcesInfo = enabledSources.map((source: Source, idx: number) => {
+          const MAX_CONTENT_LENGTH = 50000;
+          let content = source.content;
+          let truncated = false;
+
+          if (content.length > MAX_CONTENT_LENGTH) {
+            content = content.slice(0, MAX_CONTENT_LENGTH);
+            truncated = true;
+          }
+
+          let typeLabel = "";
+          if (source.type === "file") {
+            typeLabel = `文件（${source.metadata?.fileType || "未知类型"}）`;
+          } else if (source.type === "link") {
+            typeLabel = `网页（${source.metadata?.url || ""}）`;
+          } else {
+            typeLabel = "文本";
+          }
+
+          return `**来源 ${idx + 1}**: ${source.name}\n- 类型：${typeLabel}\n- 内容${truncated ? `（原文 ${source.content.length} 字，已截取前 ${MAX_CONTENT_LENGTH} 字）` : ""}：\n${content}`;
+        }).join("\n\n");
+
+        systemMessages.push({
+          role: isO1MiniModel ? "user" : "system",
+          content: `📚 **参考来源**（${enabledSources.length} 个）：\n\n${sourcesInfo}\n\n**说明**：这些是用户提供的持久参考资料，内容已完全准备就绪。更新报告时应参考这些来源（但不应直接复制，而应结合医学知识综合生成）。`
+        });
+      }
+    } catch (error) {
+      console.error("[updateArtifact] Error loading sources:", error);
+    }
+  }
+
   if (shouldInjectMaterial(state, "update")) {
     systemMessages.push({
       role: isO1MiniModel ? "user" : "system",

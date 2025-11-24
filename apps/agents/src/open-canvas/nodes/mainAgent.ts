@@ -65,9 +65,10 @@ const tools = [
     description: `提取并压缩上传的病例材料中的关键信息。
 
 **使用条件**（全部满足才能调用）：
-- 检测到用户上传了病例文档（上下文中提到附件信息）
+- 检测到用户上传了病例文档（上下文中明确提到"检测到用户上传了X个病例文档"）
+- **重要**：不要对"用户提供的参考来源"使用此工具！来源内容已准备就绪，无需提取
 - reportType已设置（可先调用set_report_type）
-- 尚未提取过材料（避免重复提取）
+- 尚未提取过材料（上下文中没有"已提取的病例材料"标记）
 
 **功能**：
 - 根据reportType使用对应模板提取关键信息
@@ -134,7 +135,9 @@ export const mainAgent = async (
   const statusMessage = new SystemMessage(
     hasArtifact
       ? `**当前状态**：已有病案报告（上下文中的 <artifact> 内容）。如果用户要求修改、更新、调整报告，请使用 update_report 工具。`
-      : `**当前状态**：尚未生成报告。如果用户提供了完整信息并要求生成报告，请使用 generate_report 工具。`
+      : !state.reportType || state.reportType === "unknown"
+        ? `**当前状态**：尚未生成报告，且报告类型未设置。必须先使用 set_report_type 工具设置报告类型（治疗类/护理类/检验类），然后才能生成报告。`
+        : `**当前状态**：尚未生成报告，报告类型已设置为 ${state.reportType === "treatment" ? "治疗类" : state.reportType === "nursing" ? "护理类" : "检验类"}。如果用户提供了完整信息并要求生成报告，可使用 generate_report 工具。`
   );
   contextMessages.push(statusMessage);
 

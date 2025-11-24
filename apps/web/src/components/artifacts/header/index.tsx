@@ -3,7 +3,7 @@ import { ArtifactTitle } from "./artifact-title";
 import { NavigateArtifactHistory } from "./navigate-artifact-history";
 import { ArtifactCodeV3, ArtifactMarkdownV3 } from "@opencanvas/shared/types";
 import { Assistant } from "@langchain/langgraph-sdk";
-import { PanelRightClose, FileDown } from "lucide-react";
+import { PanelRightClose, FileDown, Library } from "lucide-react";
 import { TooltipIconButton } from "@/components/ui/assistant-ui/tooltip-icon-button";
 
 interface ArtifactHeaderProps {
@@ -17,6 +17,8 @@ interface ArtifactHeaderProps {
   artifactUpdateFailed: boolean;
   chatCollapsed: boolean;
   setChatCollapsed: (c: boolean) => void;
+  sourcesOpen?: boolean;
+  setSourcesOpen?: (open: boolean) => void;
 }
 
 export function ArtifactHeader(props: ArtifactHeaderProps) {
@@ -41,6 +43,16 @@ export function ArtifactHeader(props: ArtifactHeaderProps) {
         />
       </div>
       <div className="flex gap-2 items-end mt-[10px] mr-[6px]">
+        {props.setSourcesOpen && (
+          <TooltipIconButton
+            tooltip="来源"
+            variant="ghost"
+            className="w-8 h-8"
+            onClick={() => props.setSourcesOpen?.(!props.sourcesOpen)}
+          >
+            <Library className="text-gray-600" />
+          </TooltipIconButton>
+        )}
         <TooltipIconButton
           tooltip="导出为 Word"
           variant="ghost"

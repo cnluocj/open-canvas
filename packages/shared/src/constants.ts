@@ -6,6 +6,7 @@ export const OC_WEB_SEARCH_RESULTS_MESSAGE_KEY =
   "__oc_web_search_results_message";
 
 export const CONTEXT_DOCUMENTS_NAMESPACE = ["context_documents"];
+export const SOURCES_NAMESPACE = ["sources"];
 
 export const DEFAULT_INPUTS = {
   highlightedCode: undefined,

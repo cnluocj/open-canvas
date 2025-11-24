@@ -3,6 +3,7 @@
 import { ArtifactRenderer } from "@/components/artifacts/ArtifactRenderer";
 import { WebSearchResults } from "@/components/web-search-results";
 import { ArtifactDiffPanel } from "@/components/artifact-diff-panel";
+import { SourcesPanel } from "@/components/sources/SourcesPanel";
 import {
   ALL_MODEL_NAMES,
   DEFAULT_MODEL_CONFIG,
@@ -38,6 +39,7 @@ export function CanvasComponent() {
   const [isEditing, setIsEditing] = useState(false);
   const [webSearchResultsOpen, setWebSearchResultsOpen] = useState(false);
   const [artifactDiffOpen, setArtifactDiffOpen] = useState(false);
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   const [chatCollapsed, setChatCollapsed] = useState(false);
 
   const searchParams = useSearchParams();
@@ -226,6 +228,8 @@ export function CanvasComponent() {
                 }}
                 setIsEditing={setIsEditing}
                 isEditing={isEditing}
+                sourcesOpen={sourcesOpen}
+                setSourcesOpen={setSourcesOpen}
               />
             </div>
             <WebSearchResults
@@ -236,6 +240,7 @@ export function CanvasComponent() {
               open={artifactDiffOpen}
               setOpen={setArtifactDiffOpen}
             />
+            <SourcesPanel open={sourcesOpen} setOpen={setSourcesOpen} />
           </ResizablePanel>
         </>
       )}

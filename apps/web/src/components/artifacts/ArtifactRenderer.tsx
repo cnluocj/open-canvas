@@ -26,6 +26,8 @@ export interface ArtifactRendererProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   chatCollapsed: boolean;
   setChatCollapsed: (c: boolean) => void;
+  sourcesOpen?: boolean;
+  setSourcesOpen?: (open: boolean) => void;
 }
 
 interface SelectionBox {
@@ -318,6 +320,8 @@ function ArtifactRendererComponent(props: ArtifactRendererProps) {
         artifactUpdateFailed={artifactUpdateFailed}
         chatCollapsed={props.chatCollapsed}
         setChatCollapsed={props.setChatCollapsed}
+        sourcesOpen={props.sourcesOpen}
+        setSourcesOpen={props.setSourcesOpen}
       />
       <div
         ref={contentRef}

@@ -275,3 +275,21 @@ export interface GraphInput {
   injectMaterialOnRewrite?: boolean;
   injectMaterialOnUpdate?: boolean;
 }
+
+// Source types for persistent reference materials
+export type SourceType = "file" | "link" | "text";
+
+export interface Source {
+  id: string;
+  name: string;
+  type: SourceType;
+  createdAt: string | Date;
+  enabled: boolean;
+  content: string;
+  metadata?: {
+    size?: number;
+    fileType?: string;
+    url?: string;
+    outline?: string[];
+  };
+}
